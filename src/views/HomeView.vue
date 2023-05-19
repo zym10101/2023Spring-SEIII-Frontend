@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <el-button type="primary">我是按钮</el-button>
-    <div>测试:{{ user.userName }}}</div>
+    <div>测试:{{ user.userName }}</div>
   </div>
 </template>
 
