@@ -4,7 +4,9 @@
     |
     <router-link to="/about">About</router-link>
     |
-    <router-link to="/analyse">数据分析</router-link>
+    <router-link to="/scrapy">数据获取</router-link>
+    |
+    <router-link to="/analyse">情感分析</router-link>
   </nav>
   <router-view />
 </template>
