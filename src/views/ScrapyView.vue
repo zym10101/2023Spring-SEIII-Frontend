@@ -32,8 +32,8 @@
           </el-col>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">确认</el-button>
-          <el-button>取消</el-button>
+          <el-button type="primary" @click="onSubmit">保存</el-button>&nbsp;&nbsp;
+          <el-text>当前项目:{{ repo_name }}</el-text>
         </el-form-item>
       </el-form>
     </div>
@@ -69,7 +69,7 @@
 import axios from "axios";
 
 export default {
-  name: "AnalyseView",
+  name: "ScrapyView",
   data() {
     return {
       form: {
@@ -81,31 +81,63 @@ export default {
       radio: '1',
       issue_message: "未处理",
       comment_message: "未处理",
+      repo_name: "未定义",
     }
   },
   methods: {
     onSubmit() {
-      // todo
-      console.log('submit!');
+      axios.post(
+          "/api/project/info",
+          this.form
+      ).then((res) => {
+        console.log(res)
+        this.repo_name = res.data
+      })
+      this.$message({
+        message: '数据源保存成功！',
+        type: 'success'
+      });
     },
     scrapy_issue() {
       if (this.issue_message === "未处理") {
         this.issue_message = "正在爬取问题，请稍候……";
+        this.$message({
+          message: this.issue_message,
+          type: 'success'
+        });
         axios.get("/api/issue/get-and-save-db").then((res) => {
           this.issue_message = res.data;
+          this.$message({
+            message: this.issue_message,
+            type: 'success'
+          });
         });
       } else {
-        alert("问题已爬取，请不要重试");
+        this.$message({
+          message: '问题已爬取，请不要重试！',
+          type: 'error'
+        });
       }
     },
     scrapy_comment() {
       if (this.comment_message === "未处理") {
         this.comment_message = "正在爬取评论，请稍候……";
+        this.$message({
+          message: this.comment_message,
+          type: 'success'
+        });
         axios.get("/api/issue/comments/get-and-save-db").then((res) => {
           this.comment_message = res.data;
+          this.$message({
+            message: this.comment_message,
+            type: 'success'
+          });
         });
       } else {
-        alert("评论已爬取，请不要重试");
+        this.$message({
+          message: '评论已爬取，请不要重试！',
+          type: 'error'
+        });
       }
     },
     download() {
