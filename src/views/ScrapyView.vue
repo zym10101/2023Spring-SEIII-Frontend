@@ -86,6 +86,18 @@ export default {
   },
   methods: {
     onSubmit() {
+      if (this.form.name !== '') {
+        this.$message({
+          message: '数据源保存成功！',
+          type: 'success'
+        });
+      } else {
+        this.$message({
+          message: '项目链接不能为空！',
+          type: 'error'
+        });
+        return
+      }
       axios.post(
           "/api/project/info",
           this.form
@@ -93,57 +105,70 @@ export default {
         console.log(res)
         this.repo_name = res.data
       })
+    },
+    checkRepoNotNull() {
+      return !(this.repo_name === "" || this.repo_name === "未定义");
+    },
+    repoNullError() {
       this.$message({
-        message: '数据源保存成功！',
-        type: 'success'
+        message: '项目名称不能为空！',
+        type: 'error'
+      });
+    },
+    RepeatTryError() {
+      this.$message({
+        message: '数据已爬取，请不要重试！',
+        type: 'error'
       });
     },
     scrapy_issue() {
-      if (this.issue_message === "未处理") {
-        this.issue_message = "正在爬取问题，请稍候……";
-        this.$message({
-          message: this.issue_message,
-          type: 'success'
-        });
-        axios.get("/api/issue/get-and-save-db").then((res) => {
-          this.issue_message = res.data;
+      if (this.checkRepoNotNull()) {
+        if (this.issue_message === "未处理") {
+          this.issue_message = "正在爬取问题，请稍候……";
           this.$message({
             message: this.issue_message,
             type: 'success'
           });
-        });
+          axios.get("/api/issue/get-and-save-db").then((res) => {
+            this.issue_message = res.data;
+            this.$message({
+              message: this.issue_message,
+              type: 'success'
+            });
+          });
+        } else {
+          this.RepeatTryError()
+        }
       } else {
-        this.$message({
-          message: '问题已爬取，请不要重试！',
-          type: 'error'
-        });
+        this.repoNullError()
       }
     },
     scrapy_comment() {
-      if (this.comment_message === "未处理") {
-        this.comment_message = "正在爬取评论，请稍候……";
-        this.$message({
-          message: this.comment_message,
-          type: 'success'
-        });
-        axios.get("/api/issue/comments/get-and-save-db").then((res) => {
-          this.comment_message = res.data;
+      if (this.checkRepoNotNull()) {
+        if (this.comment_message === "未处理") {
+          this.comment_message = "正在爬取评论，请稍候……";
           this.$message({
             message: this.comment_message,
             type: 'success'
           });
-        });
+          axios.get("/api/issue/comments/get-and-save-db").then((res) => {
+            this.comment_message = res.data;
+            this.$message({
+              message: this.comment_message,
+              type: 'success'
+            });
+          });
+        } else {
+          this.RepeatTryError()
+        }
       } else {
-        this.$message({
-          message: '评论已爬取，请不要重试！',
-          type: 'error'
-        });
+        this.repoNullError()
       }
     },
     download() {
       // todo
       console.log('download!');
-    }
+    },
   },
 };
 </script>
