@@ -55,23 +55,20 @@
     <div class="issueTable">
       <el-dialog v-model="issueTableVisible" title="问题列表">
         <el-table :data="issueData" id="issueDataTable">
-          <el-table-column property="title" label="Title" width="150"/>
-          <el-table-column property="body" label="Body" width="150"/>
-          <el-table-column property="labels" label="Labels" width="150"/>
-          <el-table-column property="create_at" label="Create_at" width="150"/>
-          <el-table-column property="user" label="User" width="150"/>
-          <el-table-column property="reactions" label="Reactions" width="150"/>
+          <el-table-column property="title" label="Title" width="150" show-overflow-tooltip/>
+          <el-table-column property="body" label="Body" width="150" show-overflow-tooltip/>
+          <el-table-column property="labels" label="Labels" width="150" show-overflow-tooltip/>
+          <el-table-column property="created_at" label="Create_at" width="150" show-overflow-tooltip/>
+          <el-table-column property="user" label="User" width="150" show-overflow-tooltip/>
         </el-table>
       </el-dialog>
     </div>
     <div class="commentTable">
       <el-dialog v-model="commentTableVisible" title="评论列表">
         <el-table :data="commentData" id="commentDataTable">
-          <el-table-column property="title" label="Title" width="150"/>
-          <el-table-column property="body" label="Body" width="150"/>
-          <el-table-column property="create_at" label="Create_at" width="150"/>
-          <el-table-column property="user" label="User" width="150"/>
-          <el-table-column property="reactions" label="Reactions" width="150"/>
+          <el-table-column property="body" label="Body" width="250" show-overflow-tooltip/>
+          <el-table-column property="created_at" label="Create_at" width="250" show-overflow-tooltip/>
+          <el-table-column property="user" label="User" width="250" show-overflow-tooltip/>
         </el-table>
       </el-dialog>
     </div>
@@ -100,21 +97,8 @@ export default {
   name: "ScrapyView",
   data() {
     return {
-      issueData: [{
-        title: 'a',
-        body: 'b',
-        labels: 'c',
-        create_at: '2023-05-04T20:22:49Z',
-        user: 'd',
-        reactions: 'e'
-      }],
-      commentData: [{
-        title: 'a',
-        body: 'b',
-        create_at: '2023-05-04T20:22:49Z',
-        user: 'd',
-        reactions: 'e'
-      }],
+      issueData: [],
+      commentData: [],
       issueTableVisible: false,
       commentTableVisible: false,
       form: {
@@ -175,7 +159,16 @@ export default {
             type: 'success'
           });
           axios.get("/api/issue/get-and-save-db").then((res) => {
-            this.issue_message = res.data;
+            this.issue_message = "爬取成功！";
+            res.data.forEach(item => {
+              let labelsName = "";
+              item.labels.forEach(_item => {
+                labelsName += _item.name + " ";
+              })
+              item.labels = labelsName
+              item.user = item.user.login
+              this.issueData = this.issueData.concat(item)
+            })
             this.$message({
               message: this.issue_message,
               type: 'success'
@@ -197,7 +190,12 @@ export default {
             type: 'success'
           });
           axios.get("/api/issue/comments/get-and-save-db").then((res) => {
-            this.comment_message = res.data;
+            this.comment_message = "爬取成功！";
+            res.data.forEach(item => {
+              console.log(item)
+              item.user = item.user.login
+              this.commentData = this.commentData.concat(item)
+            })
             this.$message({
               message: this.comment_message,
               type: 'success'
@@ -217,21 +215,37 @@ export default {
         return {data: csvData, extension: 'csv'};
       } else if (format === 'xlsx') {
         const worksheet = XLSX.utils.json_to_sheet(data);
+        const jsonComments = XLSX.utils.sheet_to_json(worksheet);
+        // 拆分长文本到多个单元格
+        const maxLength = 32767;
+        jsonComments.forEach((comment) => {
+          Object.keys(comment).forEach((key) => {
+            const value = comment[key];
+            if (typeof value === 'string' && value.length > maxLength) {
+              const parts = [];
+              for (let i = 0; i < value.length; i += maxLength) {
+                parts.push(value.substr(i, maxLength));
+              }
+              comment[key] = parts;
+            }
+          });
+        });
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, '评论');
+        const updatedWorksheet = XLSX.utils.json_to_sheet(jsonComments);
+        XLSX.utils.book_append_sheet(workbook, updatedWorksheet, '评论');
         const xlsxData = XLSX.write(workbook, {type: 'array', bookType: 'xlsx'});
         return {data: xlsxData, extension: 'xlsx'};
       } else if (format === 'txt') {
         let txtData = '';
         if (type === "issues") {
-          txtData += "Title\tBody\tCreate_at\tUser\tReactions\n";
+          txtData += "Title\tBody\tLabels\tCreated_at\tUser\n";
           data.forEach(item => {
-            txtData += `${item.title}\t${item.body}\t${item.create_at}\t${item.user}\t${item.reactions}\n`;
+            txtData += `${item.title}\t${item.body}\t${item.labels}\t${item.created_at}\t${item.user}\n`;
           });
         } else if (type === "comments") {
-          txtData += "Title\tBody\tLabels\tCreate_at\tUser\tReactions\n";
+          txtData += "Body\tCreated_at\tUser\n";
           data.forEach(item => {
-            txtData += `${item.title}\t${item.body}\t${item.labels}\t${item.create_at}\t${item.user}\t${item.reactions}\n`;
+            txtData += `${item.body}\t${item.created_at}\t${item.user}\n`;
           });
         }
         return {data: txtData, extension: 'txt'};
