@@ -11,6 +11,16 @@ npm install element-plus --save
 
 npm install axios --save
 ```
+新增mock模拟后端发送数据
+```
+npm install echarts
+```
+
+
+新增echarts绘图
+```
+npm install mockjs
+```
 解决crlf问题
 
 ```
