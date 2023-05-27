@@ -30,41 +30,41 @@
         </el-form-item>
       </el-form>
     </div>
-<!--    <div class="step2">-->
-<!--      <h2>数据获取</h2>-->
-<!--      <el-form label-width="20%">-->
-<!--        <el-form-item label="爬取问题">-->
-<!--          <el-button type="primary" id="scrapy_issue" @click="scrapy_issue">开始</el-button>&nbsp;-->
-<!--          <el-button type="success" id="scrapy_issue_detail" @click="issueTableVisible = true">查看详情</el-button>&nbsp;&nbsp;-->
-<!--          <el-text>当前状态:{{ issue_message }}</el-text>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="爬取评论">-->
-<!--          <el-button type="primary" id="scrapy_comment" @click="scrapy_comment">开始</el-button>&nbsp;-->
-<!--          <el-button type="success" id="scrapy_comment_detail" @click="commentTableVisible = true">查看详情</el-button>&nbsp;&nbsp;-->
-<!--          <el-text>当前状态:{{ comment_message }}</el-text>-->
-<!--        </el-form-item>-->
-<!--      </el-form>-->
-<!--    </div>-->
-<!--    <div class="issueTable">-->
-<!--      <el-dialog v-model="issueTableVisible" title="问题列表">-->
-<!--        <el-table :data="issueData" id="issueDataTable">-->
-<!--          <el-table-column property="title" label="Title" width="150" show-overflow-tooltip/>-->
-<!--          <el-table-column property="body" label="Body" width="150" show-overflow-tooltip/>-->
-<!--          <el-table-column property="labels" label="Labels" width="150" show-overflow-tooltip/>-->
-<!--          <el-table-column property="created_at" label="Create_at" width="150" show-overflow-tooltip/>-->
-<!--          <el-table-column property="user" label="User" width="150" show-overflow-tooltip/>-->
-<!--        </el-table>-->
-<!--      </el-dialog>-->
-<!--    </div>-->
-<!--    <div class="commentTable">-->
-<!--      <el-dialog v-model="commentTableVisible" title="评论列表">-->
-<!--        <el-table :data="commentData" id="commentDataTable">-->
-<!--          <el-table-column property="body" label="Body" width="250" show-overflow-tooltip/>-->
-<!--          <el-table-column property="created_at" label="Create_at" width="250" show-overflow-tooltip/>-->
-<!--          <el-table-column property="user" label="User" width="250" show-overflow-tooltip/>-->
-<!--        </el-table>-->
-<!--      </el-dialog>-->
-<!--    </div>-->
+    <!--    <div class="step2">-->
+    <!--      <h2>数据获取</h2>-->
+    <!--      <el-form label-width="20%">-->
+    <!--        <el-form-item label="爬取问题">-->
+    <!--          <el-button type="primary" id="scrapy_issue" @click="scrapy_issue">开始</el-button>&nbsp;-->
+    <!--          <el-button type="success" id="scrapy_issue_detail" @click="issueTableVisible = true">查看详情</el-button>&nbsp;&nbsp;-->
+    <!--          <el-text>当前状态:{{ issue_message }}</el-text>-->
+    <!--        </el-form-item>-->
+    <!--        <el-form-item label="爬取评论">-->
+    <!--          <el-button type="primary" id="scrapy_comment" @click="scrapy_comment">开始</el-button>&nbsp;-->
+    <!--          <el-button type="success" id="scrapy_comment_detail" @click="commentTableVisible = true">查看详情</el-button>&nbsp;&nbsp;-->
+    <!--          <el-text>当前状态:{{ comment_message }}</el-text>-->
+    <!--        </el-form-item>-->
+    <!--      </el-form>-->
+    <!--    </div>-->
+    <!--    <div class="issueTable">-->
+    <!--      <el-dialog v-model="issueTableVisible" title="问题列表">-->
+    <!--        <el-table :data="issueData" id="issueDataTable">-->
+    <!--          <el-table-column property="title" label="Title" width="150" show-overflow-tooltip/>-->
+    <!--          <el-table-column property="body" label="Body" width="150" show-overflow-tooltip/>-->
+    <!--          <el-table-column property="labels" label="Labels" width="150" show-overflow-tooltip/>-->
+    <!--          <el-table-column property="created_at" label="Create_at" width="150" show-overflow-tooltip/>-->
+    <!--          <el-table-column property="user" label="User" width="150" show-overflow-tooltip/>-->
+    <!--        </el-table>-->
+    <!--      </el-dialog>-->
+    <!--    </div>-->
+    <!--    <div class="commentTable">-->
+    <!--      <el-dialog v-model="commentTableVisible" title="评论列表">-->
+    <!--        <el-table :data="commentData" id="commentDataTable">-->
+    <!--          <el-table-column property="body" label="Body" width="250" show-overflow-tooltip/>-->
+    <!--          <el-table-column property="created_at" label="Create_at" width="250" show-overflow-tooltip/>-->
+    <!--          <el-table-column property="user" label="User" width="250" show-overflow-tooltip/>-->
+    <!--        </el-table>-->
+    <!--      </el-dialog>-->
+    <!--    </div>-->
     <!--    <div>-->
     <!--      <el-dialog title="请填写个人邮箱，以便数据爬取完成后及时通知您~" v-model="emailFormVisible">-->
     <!--        <el-form :model="emailForm">-->
@@ -82,18 +82,18 @@
     <!--        </template>-->
     <!--      </el-dialog>-->
     <!--    </div>-->
-<!--    <div class="step3">-->
-<!--      <h2>数据下载</h2>-->
-<!--      <el-form label-width="20%">-->
-<!--        <el-form-item label="下载格式">-->
-<!--          <el-radio v-model="radio" label="csv">csv</el-radio>-->
-<!--          <el-radio v-model="radio" label="xlsx">xlsx</el-radio>-->
-<!--          <el-radio v-model="radio" label="txt">txt</el-radio>-->
-<!--          <el-button type="primary" id="download_issue" @click="download('issues',this.radio)">下载问题</el-button>-->
-<!--          <el-button type="primary" id="download_comment" @click="download('comments',this.radio)">下载评论</el-button>-->
-<!--        </el-form-item>-->
-<!--      </el-form>-->
-<!--    </div>-->
+    <!--    <div class="step3">-->
+    <!--      <h2>数据下载</h2>-->
+    <!--      <el-form label-width="20%">-->
+    <!--        <el-form-item label="下载格式">-->
+    <!--          <el-radio v-model="radio" label="csv">csv</el-radio>-->
+    <!--          <el-radio v-model="radio" label="xlsx">xlsx</el-radio>-->
+    <!--          <el-radio v-model="radio" label="txt">txt</el-radio>-->
+    <!--          <el-button type="primary" id="download_issue" @click="download('issues',this.radio)">下载问题</el-button>-->
+    <!--          <el-button type="primary" id="download_comment" @click="download('comments',this.radio)">下载评论</el-button>-->
+    <!--        </el-form-item>-->
+    <!--      </el-form>-->
+    <!--    </div>-->
   </div>
 </template>
 
@@ -113,7 +113,7 @@ export default {
       commentTableVisible: false,
       form: {
         repo: "apache/superset",
-        since: '2023-5-1',
+        since: Date.now(),
         until: Date.now(),
         email: '3320415065@qq.com'
       },
@@ -163,7 +163,8 @@ export default {
       })
     },
     dateFormat(date) {
-      return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDay();
+      const this_date = new Date(date);
+      return this_date.getFullYear() + '-' + (this_date.getMonth() + 1) + '-' + this_date.getDate();
     },
     checkRepoNotNull() {
       return !(this.repo_name === "" || this.repo_name === "未定义");
