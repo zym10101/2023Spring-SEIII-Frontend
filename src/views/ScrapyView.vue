@@ -1,5 +1,5 @@
 <template>
-  <div class="scrapy" style="text-align: left;margin-left: 20%;margin-right: 20%;margin-top: 100px">
+  <div class="scrapy" style="text-align: left;margin-left: 10%;margin-right: 15%;margin-top: 100px">
     <div class="step1">
       <h2>数据爬取</h2>
       <el-form ref="form" :model="form" label-width="20%">
@@ -27,10 +27,10 @@
           <el-col class="line" :span="11">当前项目:{{ repo_name }}</el-col>&nbsp;
           <el-col class="line" :span="11">当前状态:{{ scrapy_status }}</el-col>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit" style="width: 8%">保存</el-button>&nbsp;
-          <el-button type="primary" @click="crawling" style="width: 8%">爬取</el-button>&nbsp;&nbsp;
-          <el-button type="success" id="scrapy_issue_detail" @click="dataTableVisible = true" style="width: 12%">查看详情</el-button>
+        <el-form-item >
+          <el-button type="primary" class="primaryButton buttonitem" @click="onSubmit">保存</el-button>
+          <el-button type="primary" class="primaryButton buttonitem" @click="crawling">爬取</el-button>
+          <el-button type="success" class="successButton buttonitem" id="scrapy_issue_detail" @click="dataTableVisible = true">查看详情</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -40,8 +40,7 @@
           <el-table-column property="title" label="Title" width="150" show-overflow-tooltip/>
           <el-table-column property="body" label="Body" width="150" show-overflow-tooltip/>
           <el-table-column property="labels" label="Labels" width="150" show-overflow-tooltip/>
-          <el-table-column property="created_at" label="Created_at" width="150" show-overflow-tooltip/>
-          <el-table-column property="updated_at" label="Updated_at" width="150" show-overflow-tooltip/>
+          <el-table-column property="created_at" label="Create_at" width="150" show-overflow-tooltip/>
           <el-table-column property="user" label="User" width="150" show-overflow-tooltip/>
         </el-table>
       </el-dialog>
@@ -49,16 +48,60 @@
     <div class="step2">
       <h2>数据下载</h2>
       <el-form label-width="20%">
-        <el-form-item label="下载格式">
+        <el-form-item label="下载格式" :class="{ 'selected': radio }">
           <el-radio v-model="radio" label="csv">csv</el-radio>
           <el-radio v-model="radio" label="xlsx">xlsx</el-radio>
           <el-radio v-model="radio" label="txt">txt</el-radio>
-          <el-button type="primary" id="download" @click="download(this.radio)" style="width: 8%">下载</el-button>
+          <el-button type="primary" id="download" @click="download(this.radio)" >下载</el-button>
         </el-form-item>
       </el-form>
     </div>
   </div>
 </template>
+<style>
+.buttonitem{
+    width: 100%;
+    background: #4ea397;
+    color: white;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+    padding: 23px 0;
+    cursor: pointer;
+    margin-top: 20px;
+    margin-left: 12px;
+    &:hover {
+        background: #71b5ac;
+    }
+}
+.successButton{
+    background: #2c3e50;
+    &:hover {
+        background: #566573;
+    }
+}
+#download{
+    width: 100px;
+    background: #4ea397;
+    color: white;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    &:hover {
+        background: #71b5ac;
+    }
+}
+
+.el-radio__input.is-checked .el-radio__inner {
+    border-color:#71b5ac;
+    background: #71b5ac;
+}
+.el-radio__input.is-checked+.el-radio__label {
+    color: #71b5ac;
+
+}
+</style>
 
 <script>
 // @ is an alias to /src
@@ -134,7 +177,6 @@ export default {
           "api/crawling",
           this.form
       ).then((res) => {
-        console.log(res)
         res.data.forEach(item => {
           let labelsName = "";
           item.labels.forEach(_item => {
