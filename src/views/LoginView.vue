@@ -4,7 +4,7 @@
             <div class="wrapper__box">
                 <div class="wrapper__box__hero"></div>
                 <div class="wrapper__box__body">
-                    <el-form v-if="isLoginForm" :model="loginForm" @submit.prevent="login" style="margin-top: 50px">
+                    <el-form v-if="isLoginForm" :model="loginForm" @submit.prevent="login" style="margin-top: 30px">
                         <h1 style="margin-bottom: 20px">{{ isLoginForm ? 'Login in' : 'Create new account' }}</h1>
 
                         <p class="input_title">username</p>
@@ -190,7 +190,7 @@ body {
     justify-content: center;
 
     &__box {
-        width: 76%;
+        width: 800px;
         height: 600px;
         border-radius: 15px;
         background: white;
@@ -200,7 +200,7 @@ body {
 
         &__hero {
             width: 270px;
-            background: rgb(223, 223, 223) url("https://mir-s3-cdn-cf.behance.net/project_modules/1400/c0bdd180548905.5ce57356e95e2.jpg") center;
+            background: rgb(223, 223, 223) url("../assets/image_login.jpg") center;
             background-size: cover;
         }
 

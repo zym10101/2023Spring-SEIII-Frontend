@@ -1,9 +1,9 @@
 <template>
-    <h1>WELCOME！</h1>
+    <h1 class="welcome">WELCOME！</h1>
 </template>
 
 <style>
-h1{
+.welcome{
     margin-top: 200px;
 }
 </style>
