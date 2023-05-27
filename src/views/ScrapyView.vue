@@ -102,7 +102,7 @@ export default {
       issueTableVisible: false,
       commentTableVisible: false,
       form: {
-        name: '',
+        name: "https://github.com/apache/superset",
         version: '',
         startTime: '',
         endTime: '',
@@ -120,6 +120,8 @@ export default {
           message: '数据源保存成功！',
           type: 'success'
         });
+        this.comment_message = "未处理";
+        this.issue_message = "未处理";
       } else {
         this.$message({
           message: '项目链接不能为空！',
