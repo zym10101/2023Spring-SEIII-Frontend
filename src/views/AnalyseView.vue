@@ -1,18 +1,20 @@
 <template>
     <div class="app">
         <h1>项目粒度分析</h1>
-
-        <div class="selectedbox">
-            <select v-model="selectedPie" >
+        <div class="selectedbox" >
+            <select v-model="selectedPie" class="box" >
                 <option value="option1">issues and comments</option>
                 <option value="option2">issues</option>
                 <option value="option3">comments</option>
             </select>
         </div>
-        <div id="PieOfAll" style="width: 100% ;height: 400px;"></div>
+            <div id="PieOfAll" style="width: 100% ;height: 400px;position: relative;">
+
+            </div>
+
 
         <div class="selectedbox">
-            <select v-model="selectedLine">
+            <select v-model="selectedLine" class="box" >
                 <option value="option1">issues and comments</option>
                 <option value="option2">issues</option>
                 <option value="option3">comments</option>
@@ -30,21 +32,25 @@
     /* 设置背景颜色 */
     //background-color: rgba(254,248,239,1);
     background-color: white;
+    margin-top: 100px;
 }
 .selectedbox{
-    background-color:  white;
-    color:  white;
-    /* 调整字体大小 */
-    font-size: 30px;
-
-    /* 调整可选框的高度 */
-    height: 100px;
-
-    /* 调整可选框的宽度 */
-    width: 400px;
-
-
+    position: absolute;
+    left: 400px;
+    z-index: 9999;
 }
+.box {
+    width: 300px;
+    height: 20px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f7f7f7;
+    font-family: Arial, sans-serif;
+}
+
 </style>
 
 <script >
@@ -63,10 +69,6 @@ export default {
             selectedPie: null,
             selectedLine:null,
             curTheme:mytheme1 ,
-            chartset:{
-                chart1:null,
-                chart2:null
-            }
         };
     },
     mounted() {
@@ -150,16 +152,18 @@ export default {
         },
         drawLineChart(data,title){
             const chartContainer = document.getElementById('LineOfAll');
-            this.chartset.chart2 = echarts.init(chartContainer,this.curTheme);
+            const mychart = echarts.init(chartContainer,this.curTheme);
+            window.addEventListener('resize', function() {
+                mychart.resize();
+            });
+
+
             const option = {
                 title: {
                     text: title
                 },
                 tooltip: {
                     trigger: 'axis'
-                },
-                legend: {
-                    data: ['positive', 'negative']
                 },
                 grid: {
                     left: '3%',
@@ -196,12 +200,15 @@ export default {
                     }
                 ]
             };
-            this.chartset.chart2.setOption(option);
+            mychart.setOption(option);
         },
         drawPieChart(data,title) {
 
             const chartContainer = document.getElementById('PieOfAll');
-            this.chartset.chart1 = echarts.init(chartContainer,this.curTheme);
+            const mychart = echarts.init(chartContainer,this.curTheme);
+            window.addEventListener('resize', function() {
+                mychart.resize();
+            });
             // 使用后台数据绘制扇形图
             const option = {
                 title: {
@@ -235,7 +242,7 @@ export default {
                     }
                 ]
             };
-            this.chartset.chart1.setOption(option);
+            mychart.setOption(option);
         }
 
     }

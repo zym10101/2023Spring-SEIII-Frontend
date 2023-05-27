@@ -1,5 +1,5 @@
 <template>
-  <div class="scrapy" style="text-align: left;margin-left: 20%;margin-right: 20%">
+  <div class="scrapy" style="text-align: left;margin-left: 20%;margin-right: 20%;margin-top: 100px">
     <div class="step1">
       <h2>数据来源</h2>
       <el-form ref="form" :model="form" label-width="20%">

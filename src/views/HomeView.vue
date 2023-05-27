@@ -1,10 +1,3 @@
 <template>
-  <div class="home">
-    <h1>WELCOME!</h1>
-  </div>
+    <h1>WELCOME！</h1>
 </template>
-
-<script>
-// @ is an alias to /src
-
-</script>
