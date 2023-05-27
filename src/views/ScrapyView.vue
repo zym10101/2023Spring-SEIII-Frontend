@@ -72,6 +72,23 @@
         </el-table>
       </el-dialog>
     </div>
+    <div>
+      <el-dialog title="请填写个人邮箱，以便数据爬取完成后及时通知您~" v-model="emailFormVisible">
+        <el-form :model="emailForm">
+          <el-form-item label="邮箱" prop="email" :label-width="formLabelWidth" :rules="[
+      { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
+            <el-input v-model="emailForm.email" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+    <span class="dialog-footer">
+      <el-button @click="emailFormVisible = false">取 消</el-button>
+      <el-button type="primary" @click="submitEmailForm">确 定</el-button>
+    </span>
+        </template>
+      </el-dialog>
+    </div>
     <div class="step3">
       <h2>数据下载</h2>
       <el-form label-width="20%">
@@ -111,9 +128,21 @@ export default {
       issue_message: "未处理",
       comment_message: "未处理",
       repo_name: "未定义",
+      emailFormVisible: false,
+      emailForm: {
+        email: '',
+      },
+      formLabelWidth: '120px'
     }
   },
   methods: {
+    submitEmailForm() {
+      this.emailFormVisible = false;
+      this.$message({
+        message: '邮箱提交成功！',
+        type: 'success'
+      });
+    },
     onSubmit() {
       if (this.form.name !== '') {
         this.$message({
@@ -133,7 +162,6 @@ export default {
           "/api/project/info",
           this.form
       ).then((res) => {
-        console.log(res)
         this.repo_name = res.data
       })
     },
@@ -155,6 +183,9 @@ export default {
     scrapy_issue() {
       if (this.checkRepoNotNull()) {
         if (this.issue_message === "未处理") {
+          if (this.emailForm.email === '') {
+            this.emailFormVisible = true;
+          }
           this.issue_message = "正在爬取问题，请稍候……";
           this.$message({
             message: this.issue_message,
@@ -175,6 +206,10 @@ export default {
               message: this.issue_message,
               type: 'success'
             });
+            axios.post(
+                "/api/email",
+                this.emailForm
+            )
           });
         } else {
           this.RepeatTryError()
@@ -186,6 +221,10 @@ export default {
     scrapy_comment() {
       if (this.checkRepoNotNull()) {
         if (this.comment_message === "未处理") {
+          console.log(this.emailForm.email)
+          if (this.emailForm.email === '') {
+            this.emailFormVisible = true;
+          }
           this.comment_message = "正在爬取评论，请稍候……";
           this.$message({
             message: this.comment_message,
