@@ -1,7 +1,7 @@
 <template>
   <div class="scrapy" style="text-align: left;margin-left: 20%;margin-right: 20%;margin-top: 100px">
     <div class="step1">
-      <h2>数据来源</h2>
+      <h2>数据爬取</h2>
       <el-form ref="form" :model="form" label-width="20%">
         <el-form-item label="仓库名称" prop="repo"
                       :rules="[{required: true, message: '请输入仓库名称', trigger: 'blur'}]">
@@ -28,9 +28,9 @@
           <el-col class="line" :span="11">当前状态:{{ scrapy_status }}</el-col>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">保存</el-button>&nbsp;
-          <el-button type="primary" @click="crawling">爬取</el-button>&nbsp;&nbsp;
-          <el-button type="success" id="scrapy_issue_detail" @click="dataTableVisible = true">查看详情</el-button>
+          <el-button type="primary" @click="onSubmit" style="width: 8%">保存</el-button>&nbsp;
+          <el-button type="primary" @click="crawling" style="width: 8%">爬取</el-button>&nbsp;&nbsp;
+          <el-button type="success" id="scrapy_issue_detail" @click="dataTableVisible = true" style="width: 12%">查看详情</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -45,14 +45,14 @@
         </el-table>
       </el-dialog>
     </div>
-    <div class="step3">
+    <div class="step2">
       <h2>数据下载</h2>
       <el-form label-width="20%">
         <el-form-item label="下载格式">
           <el-radio v-model="radio" label="csv">csv</el-radio>
           <el-radio v-model="radio" label="xlsx">xlsx</el-radio>
           <el-radio v-model="radio" label="txt">txt</el-radio>
-          <el-button type="primary" id="download" @click="download(this.radio)">下载</el-button>
+          <el-button type="primary" id="download" @click="download(this.radio)" style="width: 8%">下载</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -72,15 +72,21 @@ export default {
       issueData: [],
       dataTableVisible: false,
       form: {
-        repo: "apache/superset",
-        since: Date.now(),
-        until: Date.now(),
-        email: '3320415065@qq.com'
+        repo: "",
+        since: "",
+        until: "",
+        email: ""
       },
       scrapy_status: '未处理',
       radio: 'csv',
       repo_name: "未定义",
     }
+  },
+  mounted() {
+    this.form.repo = "apache/superset";
+    this.form.since = Date.now();
+    this.form.until = Date.now();
+    this.form.email = "3320415065@qq.com";
   },
   methods: {
     onSubmit() {

@@ -5,25 +5,25 @@ const Mock = require('mockjs')
 // 获取 mock.Random 对象
 // mock新闻数据，包括新闻标题title、内容content、创建时间createdTime
 const produceNewsData = function () {
-    let dataObj={
+    let dataObj = {
         title: '项目整体情绪分布图——issue+comment',
-        data: [67,34]
+        data: [67, 34]
     }
 
     return dataObj
 }
 const produceNewsData_issues = function () {
-    let dataObj={
+    let dataObj = {
         title: '项目整体情绪分布图——issue',
-        data: [50,50]
+        data: [50, 50]
     }
 
     return dataObj
 }
 const produceNewsData_comments = function () {
-    let dataObj={
+    let dataObj = {
         title: '项目整体情绪分布图——comment',
-        data: [60,40]
+        data: [60, 40]
     }
 
     return dataObj
