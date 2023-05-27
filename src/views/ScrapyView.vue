@@ -40,7 +40,8 @@
           <el-table-column property="title" label="Title" width="150" show-overflow-tooltip/>
           <el-table-column property="body" label="Body" width="150" show-overflow-tooltip/>
           <el-table-column property="labels" label="Labels" width="150" show-overflow-tooltip/>
-          <el-table-column property="created_at" label="Create_at" width="150" show-overflow-tooltip/>
+          <el-table-column property="created_at" label="Created_at" width="150" show-overflow-tooltip/>
+          <el-table-column property="updated_at" label="Updated_at" width="150" show-overflow-tooltip/>
           <el-table-column property="user" label="User" width="150" show-overflow-tooltip/>
         </el-table>
       </el-dialog>
@@ -133,6 +134,7 @@ export default {
           "api/crawling",
           this.form
       ).then((res) => {
+        console.log(res)
         res.data.forEach(item => {
           let labelsName = "";
           item.labels.forEach(_item => {
@@ -182,9 +184,9 @@ export default {
         return {data: xlsxData, extension: 'xlsx'};
       } else if (format === 'txt') {
         let txtData = '';
-        txtData += "Title\tBody\tLabels\tCreated_at\tUser\n";
+        txtData += "Title\tBody\tLabels\tCreated_at\tUpdated_at\tUser\n";
         data.forEach(item => {
-          txtData += `${item.title}\t${item.body}\t${item.labels}\t${item.created_at}\t${item.user}\n`;
+          txtData += `${item.title}\t${item.body}\t${item.labels}\t${item.created_at}\t${item.updated_at}\t${item.user}\n`;
         });
         return {data: txtData, extension: 'txt'};
       } else {
