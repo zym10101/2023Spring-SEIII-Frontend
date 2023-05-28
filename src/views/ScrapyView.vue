@@ -1,7 +1,7 @@
 <template>
-  <div class="scrapy" style="text-align: left;margin-left: 10%;margin-right: 15%;margin-top: 100px">
-    <div class="step1">
-      <h2>数据爬取</h2>
+  <div class="scrapy" style="margin-top: 100px;width: 90%">
+    <div class="container">
+      <h1 style="margin-left: 10%">数据获取</h1>
       <el-form ref="form" :model="form" label-width="20%">
         <el-form-item label="仓库名称" prop="repo"
                       :rules="[{required: true, message: '请输入仓库名称', trigger: 'blur'}]">
@@ -33,7 +33,7 @@
           <el-button type="success" class="successButton buttonitem" id="scrapy_issue_detail"
                      @click="dataTableVisible = true">查看详情
           </el-button>
-          <el-button type="primary" class="successButton buttonitem" @click="chooseType">下载
+          <el-button type="success" class="successButton buttonitem" @click="chooseType">下载
           </el-button>
         </el-form-item>
       </el-form>
@@ -45,6 +45,7 @@
           <el-table-column property="body" label="Body" width="150" show-overflow-tooltip/>
           <el-table-column property="labels" label="Labels" width="150" show-overflow-tooltip/>
           <el-table-column property="created_at" label="Create_at" width="150" show-overflow-tooltip/>
+          <el-table-column property="updated_at" label="Update_at" width="150" show-overflow-tooltip/>
           <el-table-column property="user" label="User" width="150" show-overflow-tooltip/>
         </el-table>
       </el-dialog>
@@ -60,8 +61,8 @@
         </el-form>
         <template #footer>
           <span class="dialog-footer">
-            <el-button type="primary" @click="download(this.radio)">下载</el-button>
-            <el-button type="warning" @click="chooseTypeVisible = false">取消</el-button>
+            <el-button type="success" class="successButton buttonitem" @click="download(this.radio)">下载</el-button>
+            <el-button type="warning" class="primaryButton buttonitem" @click="chooseTypeVisible = false">取消</el-button>
           </span>
         </template>
       </el-dialog>
