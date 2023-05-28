@@ -33,8 +33,8 @@
           <el-button type="success" class="successButton buttonitem" id="scrapy_issue_detail"
                      @click="dataTableVisible = true">查看详情
           </el-button>
-          <el-button type="success" class="successButton buttonitem" @click="chooseType">下载
-          </el-button>
+          <el-button type="success" class="successButton buttonitem" @click="chooseType">下载</el-button>
+          <el-button type="success" class="successButton buttonitem" @click="analyse">情感分析</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -62,7 +62,8 @@
         <template #footer>
           <span class="dialog-footer">
             <el-button type="success" class="successButton buttonitem" @click="download(this.radio)">下载</el-button>
-            <el-button type="warning" class="primaryButton buttonitem" @click="chooseTypeVisible = false">取消</el-button>
+            <el-button type="warning" class="primaryButton buttonitem"
+                       @click="chooseTypeVisible = false">取消</el-button>
           </span>
         </template>
       </el-dialog>
@@ -71,7 +72,7 @@
 </template>
 <style>
 .buttonitem {
-  width: 22%;
+  width: 18%;
   background: #4ea397;
   color: white;
   border-radius: 15px;
@@ -173,10 +174,23 @@ export default {
         return true
       }
     },
+    checkScrapyNotFinish() {
+      if (this.scrapy_status !== '数据爬取完成') {
+        this.$message({
+          message: '数据不存在',
+          type: 'error'
+        });
+        return true
+      }
+    },
     crawling() {
       if (this.checkRepoNull() || this.checkRepeatTry()) {
         return
       }
+      this.$message({
+        message: '数据爬取中，请稍候……',
+        type: 'success'
+      });
       this.scrapy_status = '数据爬取中，请稍候……';
       this.form.since = this.dateFormat(this.form.since)
       this.form.until = this.dateFormat(this.form.until)
@@ -194,10 +208,10 @@ export default {
           this.issueData = this.issueData.concat(item)
         })
         this.$message({
-          message: '爬取完成！',
+          message: '数据爬取完成',
           type: 'success'
         });
-        this.scrapy_status = '已完成！'
+        this.scrapy_status = '数据爬取完成'
       })
     },
     dateFormat(date) {
@@ -243,6 +257,10 @@ export default {
       }
     },
     download(format) {
+      this.$message({
+        message: '数据下载成功',
+        type: 'success'
+      });
       const formatData = this.generateData(format);
       if (formatData) {
         const {data, extension} = formatData;
@@ -255,8 +273,20 @@ export default {
         document.body.removeChild(downloadLink);
       }
     },
+
     chooseType() {
+      this.checkScrapyNotFinish();
       this.chooseTypeVisible = true;
+    },
+    analyse() {
+      if (this.checkScrapyNotFinish()) {
+        return
+      }
+      this.$message({
+        message: '情感分析中，请稍候……',
+        type: 'success'
+      });
+      this.scrapy_status = '情感分析中，请稍候……';
     }
   },
 };
