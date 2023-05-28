@@ -27,10 +27,14 @@
           <el-col class="line" :span="11">当前项目:{{ repo_name }}</el-col>&nbsp;
           <el-col class="line" :span="11">当前状态:{{ scrapy_status }}</el-col>
         </el-form-item>
-        <el-form-item >
+        <el-form-item>
           <el-button type="primary" class="primaryButton buttonitem" @click="onSubmit">保存</el-button>
           <el-button type="primary" class="primaryButton buttonitem" @click="crawling">爬取</el-button>
-          <el-button type="success" class="successButton buttonitem" id="scrapy_issue_detail" @click="dataTableVisible = true">查看详情</el-button>
+          <el-button type="success" class="successButton buttonitem" id="scrapy_issue_detail"
+                     @click="dataTableVisible = true">查看详情
+          </el-button>
+          <el-button type="primary" class="successButton buttonitem" @click="chooseType">下载
+          </el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -45,60 +49,61 @@
         </el-table>
       </el-dialog>
     </div>
-    <div class="step2">
-      <h2>数据下载</h2>
-      <el-form label-width="20%">
-        <el-form-item label="下载格式" :class="{ 'selected': radio }">
-          <el-radio v-model="radio" label="csv">csv</el-radio>
-          <el-radio v-model="radio" label="xlsx">xlsx</el-radio>
-          <el-radio v-model="radio" label="txt">txt</el-radio>
-          <el-button type="primary" id="download" @click="download(this.radio)" >下载</el-button>
-        </el-form-item>
-      </el-form>
+    <div class="type">
+      <el-dialog v-model="chooseTypeVisible" title="请选择下载格式">
+        <el-form label-width="20%">
+          <el-form-item label="下载格式" :class="{ 'selected': radio }">
+            <el-radio v-model="radio" label="csv">csv</el-radio>
+            <el-radio v-model="radio" label="xlsx">xlsx</el-radio>
+            <el-radio v-model="radio" label="txt">txt</el-radio>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button type="primary" @click="download(this.radio)">下载</el-button>
+            <el-button type="warning" @click="chooseTypeVisible = false">取消</el-button>
+          </span>
+        </template>
+      </el-dialog>
     </div>
   </div>
 </template>
 <style>
-.buttonitem{
-    width: 100%;
-    background: #4ea397;
-    color: white;
-    border-radius: 15px;
-    border: none;
-    outline: none;
-    padding: 23px 0;
-    cursor: pointer;
-    margin-top: 20px;
-    margin-left: 12px;
-    &:hover {
-        background: #71b5ac;
-    }
+.buttonitem {
+  width: 22%;
+  background: #4ea397;
+  color: white;
+  border-radius: 15px;
+  border: none;
+  outline: none;
+  padding: 23px 0;
+  cursor: pointer;
+  margin-top: 20px;
+  margin-left: 12px;
+
+&
+:hover {
+  background: #71b5ac;
 }
-.successButton{
-    background: #2c3e50;
-    &:hover {
-        background: #566573;
-    }
+
 }
-#download{
-    width: 100px;
-    background: #4ea397;
-    color: white;
-    border-radius: 15px;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    &:hover {
-        background: #71b5ac;
-    }
+.successButton {
+  background: #2c3e50;
+
+&
+:hover {
+  background: #566573;
+}
+
 }
 
 .el-radio__input.is-checked .el-radio__inner {
-    border-color:#71b5ac;
-    background: #71b5ac;
+  border-color: #71b5ac;
+  background: #71b5ac;
 }
-.el-radio__input.is-checked+.el-radio__label {
-    color: #71b5ac;
+
+.el-radio__input.is-checked + .el-radio__label {
+  color: #71b5ac;
 
 }
 </style>
@@ -115,6 +120,7 @@ export default {
     return {
       issueData: [],
       dataTableVisible: false,
+      chooseTypeVisible: false,
       form: {
         repo: "",
         since: "",
@@ -248,6 +254,9 @@ export default {
         document.body.removeChild(downloadLink);
       }
     },
+    chooseType() {
+      this.chooseTypeVisible = true;
+    }
   },
 };
 </script>
