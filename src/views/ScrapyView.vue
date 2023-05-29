@@ -287,6 +287,9 @@ export default {
         type: 'success'
       });
       this.scrapy_status = '情感分析中，请稍候……';
+      axios.get("/api/issue/cal-Senti").then((res) => {
+        console.log(res);
+      })
     }
   },
 };
