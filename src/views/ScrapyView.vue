@@ -28,7 +28,7 @@
           <el-col class="line" :span="11">当前状态:{{ scrapy_status }}</el-col>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" class="primaryButton buttonitem" @click="onSubmit">保存</el-button>
+          <el-button type="primary" class="primaryButton buttonitem" @click="onSubmit">保存配置</el-button>
           <el-button type="primary" class="primaryButton buttonitem" @click="crawling">爬取</el-button>
           <el-button type="success" class="successButton buttonitem" id="scrapy_issue_detail"
                      @click="dataTableVisible = true">查看详情
@@ -83,17 +83,19 @@
   margin-top: 20px;
   margin-left: 12px;
 
-    &:hover {
-        background: #71b5ac;
-    }
+&
+:hover {
+  background: #71b5ac;
+}
 
 }
 .successButton {
   background: #2c3e50;
 
-  &:hover {
-    background: #566573;
-  }
+&
+:hover {
+  background: #566573;
+}
 
 }
 
@@ -286,7 +288,14 @@ export default {
       });
       this.scrapy_status = '情感分析中，请稍候……';
       axios.get("/api/issue/cal-Senti").then((res) => {
-        console.log(res);
+        this.$router.push({
+          // 跳转到的页面名
+          name: 'analyse',
+          // 传递的参数集合
+          params: {
+            detailData: res.data
+          }
+        })
       })
     }
   },
