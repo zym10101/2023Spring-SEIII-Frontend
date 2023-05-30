@@ -5,35 +5,41 @@
       <el-form ref="form" :model="form" label-width="20%">
         <el-form-item label="仓库名称" prop="repo"
                       :rules="[{required: true, message: '请输入仓库名称', trigger: 'blur'}]">
-          <el-input v-model="form.repo"></el-input>
+          <el-input v-model="form.repo" style="width: 80%;margin-right: 10px"></el-input>
+          <el-button type="success" @click="saveRepoName">暂存</el-button>
+          <el-button type="warning" @click="clearRepoName">还原</el-button>
         </el-form-item>
         <el-form-item label="版本时间">
-          <el-col :span="11">
-            <el-date-picker type="date" placeholder="起始时间" v-model="form.since"
+          <el-col :span="9" style="margin-right: 10px">
+            <el-date-picker type="date" :disabled-date="disabledDate" placeholder="起始时间" v-model="form.since"
                             style="width: 100%;"></el-date-picker>
           </el-col>
-          <el-col class="line" :span="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至</el-col>
-          <el-col :span="11">
+          <el-col class="line" :span="1">至</el-col>
+          <el-col :span="9" style="margin-right: 10px">
             <el-date-picker type="date" placeholder="结束时间" v-model="form.until"
-                            style="width: 100%;"></el-date-picker>
+                            style="width:100%;"></el-date-picker>
           </el-col>
+          <el-button type="success">暂存</el-button>
+          <el-button type="warning">还原</el-button>
         </el-form-item>
         <el-form-item label="个人邮箱" prop="email" :rules="[
       { required: true, message: '请输入邮箱地址', trigger: 'blur' },
       { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
-          <el-input v-model="form.email" autocomplete="off"></el-input>
+          <el-input v-model="form.email" autocomplete="off" style="width: 80%;margin-right: 10px"></el-input>
+          <el-button type="success">暂存</el-button>
+          <el-button type="warning">还原</el-button>
         </el-form-item>
         <el-form-item>
           <el-col class="line" :span="11">当前项目:{{ repo_name }}</el-col>&nbsp;
           <el-col class="line" :span="11">当前状态:{{ scrapy_status }}</el-col>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" class="primaryButton buttonitem" @click="onSubmit">保存配置</el-button>
-          <el-button type="primary" class="primaryButton buttonitem" @click="crawling">爬取</el-button>
+          <el-button type="primary" class="primaryButton buttonitem" @click="onSubmit">提交配置</el-button>
+          <el-button type="primary" class="primaryButton buttonitem" @click="crawling">爬取数据</el-button>
           <el-button type="success" class="successButton buttonitem" id="scrapy_issue_detail"
                      @click="dataTableVisible = true">查看详情
           </el-button>
-          <el-button type="success" class="successButton buttonitem" @click="chooseType">下载</el-button>
+          <el-button type="success" class="successButton buttonitem" @click="chooseType">下载数据</el-button>
           <el-button type="success" class="successButton buttonitem" @click="analyse">情感分析</el-button>
         </el-form-item>
       </el-form>
@@ -132,6 +138,7 @@ export default {
       scrapy_status: '未处理',
       radio: 'csv',
       repo_name: "未定义",
+      earliestTime: '',
     }
   },
   mounted() {
@@ -141,6 +148,25 @@ export default {
     this.form.email = "3320415065@qq.com";
   },
   methods: {
+    disabledDate(date) {
+      return date < new Date(this.earliestTime);
+    },
+    saveRepoName() {
+      axios.get('/api/issue/earliest', {
+        params: {
+          repo: this.form.repo
+        }
+      }).then((res) => {
+        this.earliestTime = res.data
+        this.$message({
+          message: '仓库名称保存成功！',
+          type: 'success'
+        });
+      })
+    },
+    clearRepoName() {
+      this.form.repo = ''
+    },
     onSubmit() {
       if (this.form.repo === '' || this.form.email === '') {
         this.$message({
