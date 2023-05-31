@@ -75,9 +75,9 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="id" label="IssueId" width="100" show-overflow-tooltip>
+          <el-table-column prop="id" label="Id" width="130" show-overflow-tooltip sortable>
           </el-table-column>
-          <el-table-column prop="state" label="IssueState" width="130" show-overflow-tooltip
+          <el-table-column prop="state" label="State" width="130" show-overflow-tooltip sortable
                            :filters="[{ text: 'open', value: 'open' }, { text: 'closed', value: 'closed' }]"
                            :filter-method="filterTag"
                            filter-placement="bottom-end">
