@@ -398,9 +398,7 @@ export default {
         return
       }
       this.$router.push({
-        // 跳转到的页面名
         name: 'analyse',
-        // 传递的参数集合
         params: {
           repoName: this.form.repo,
           repoSince: this.form.since,
