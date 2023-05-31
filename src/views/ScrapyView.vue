@@ -128,20 +128,17 @@
   margin-top: 20px;
   margin-left: 12px;
 
-&
-:hover {
-  background: #71b5ac;
-}
+    &:hover {
+       background: #71b5ac;
+    }
 
 }
 .successButton {
   background: #2c3e50;
 
-&
-:hover {
-  background: #566573;
-}
-
+  &:hover {
+     background: #566573;
+  }
 }
 
 
@@ -401,8 +398,8 @@ export default {
         name: 'analyse',
         params: {
           repoName: this.form.repo,
-          repoSince: this.form.since,
-          repoUntil: this.form.until
+          repoSince:this.form.since,
+          repoUntil:this.form.until
         }
       })
     }
