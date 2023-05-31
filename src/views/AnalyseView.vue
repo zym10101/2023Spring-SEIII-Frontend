@@ -1,9 +1,29 @@
 <template>
     <div class="app">
-        <h1>项目粒度分析</h1>
+
+        <h1>{{ this.reponame }}情绪分析可视化结果</h1>
+        <el-form class="datefrom" ref="form" :model="form" label-width="20%">
+          <el-row>
+              <el-col :span="9" style="margin-right: 10px">
+                  <el-date-picker v-model="form.since" type="date" :disabled-date="disabledDateSince" placeholder="起始时间" style="width: 100%;z-index: 999;"></el-date-picker>
+              </el-col>
+              <el-col :span="2">至</el-col>
+              <el-col :span="9" style="margin-right: 10px">
+                  <el-date-picker v-model="form.until" type="date" :disabled-date="disabledDateUntil" placeholder="结束时间" style="width:100%;z-index: 999;"></el-date-picker>
+              </el-col>
+              <el-col :span="2">
+                  <el-button type="success" @click="saveRepoDate" style="background-color: #4ea397; color: white; display: inline-block;">保存</el-button>
+              </el-col>
+          </el-row>
+        </el-form>
+
+
+
+
+        <h2>项目粒度分析</h2>
         <div class="selectedbox" >
             <select v-model="selectedPie" class="box" >
-                <option value="option1">issues and comments</option>
+<!--                <option value="option1">issues and comments</option>-->
                 <option value="option2">issues</option>
                 <option value="option3">comments</option>
             </select>
@@ -15,7 +35,7 @@
 
         <div class="selectedbox">
             <select v-model="selectedLine" class="box" >
-                <option value="option1">issues and comments</option>
+<!--                <option value="option1">issues and comments</option>-->
                 <option value="option2">issues</option>
                 <option value="option3">comments</option>
             </select>
@@ -34,10 +54,11 @@
     background-color: white;
     margin-top: 100px;
 }
+
 .selectedbox{
     position: absolute;
     left: 400px;
-    z-index: 9999;
+    z-index: 999;
 }
 h1{
     margin: 20px;
@@ -72,11 +93,22 @@ export default {
             selectedPie: null,
             selectedLine:null,
             curTheme:mytheme1 ,
+            reponame: "apache/superset",
+            form: {
+                repo: "",
+                since: "",
+                until: "",
+            },
+            earliestTime: "2022-3-1",
+            latestTime: "2023-5-31",
         };
     },
     mounted() {
-       this.getPieData('option1');
-       this.getLineData('option1');
+        this.form.since=this.earliestTime;
+        this.form.until=this.latestTime;
+       this.getPieData('option2');
+       this.getLineData('option2');
+
     },
     watch: {
         selectedPie(newValue, oldValue) {
@@ -96,8 +128,13 @@ export default {
     methods:{
 
         getPieData(newValue){
+            const params = {
+                repo_name: this.reponame,
+                start_time: this.form.since,
+                end_time: this.form.until
+            };
             if(newValue=='option1'){
-                axios.get('/analyse/pie/all').then(res => { // url即在mock.js中定义的
+                axios.get('/api/analyse/pie/all',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data)
                     console.log(res.data.data)// 打印一下响应数据
                     this.drawPieChart(res.data.data,res.data.title);
@@ -105,15 +142,25 @@ export default {
                 })
             }
             if(newValue=='option2'){
+                const params = {
+                    repo_name: this.reponame,
+                    start_time: this.form.since,
+                    end_time: this.form.until
+                };
                 console.log("change to 2")
-                axios.get('/analyse/pie/issue').then(res => { // url即在mock.js中定义的
+                axios.get('/api/analyse/pie/issue',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data.data)// 打印一下响应数据
                     this.drawPieChart(res.data.data,res.data.title);
 
                 })
             }
             if(newValue=='option3'){
-                axios.get('/analyse/pie/comment').then(res => { // url即在mock.js中定义的
+                const params = {
+                    repo_name: this.reponame,
+                    start_time: this.form.since,
+                    end_time: this.form.until
+                };
+                axios.get('/api/analyse/pie/comment',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data)
                     console.log(res.data.data)// 打印一下响应数据
                     this.drawPieChart(res.data.data,res.data.title);
@@ -129,7 +176,12 @@ export default {
             //     this.drawLineChart(res.data.data,res.data.title)
             // })
             if(newValue=='option1'){
-                axios.get('/analyse/linecharm/all').then(res => { // url即在mock.js中定义的
+                const params = {
+                    repo_name: this.reponame,
+                    start_time: this.form.since,
+                    end_time: this.form.until
+                };
+                axios.get('/api/analyse/line/all', { params }).then(res => { // url即在mock.js中定义的
                     console.log(res.data)
                     console.log(res.data.data)// 打印一下响应数据
                     this.drawLineChart(res.data.data,res.data.title);
@@ -138,14 +190,24 @@ export default {
             }
             if(newValue=='option2'){
                 console.log("change to 2")
-                axios.get('/analyse/linecharm/issue').then(res => { // url即在mock.js中定义的
+                const params = {
+                    repo_name: this.reponame,
+                    start_time: this.form.since,
+                    end_time: this.form.until
+                };
+                axios.get('/api/analyse/line/issue',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data.data)// 打印一下响应数据
                     this.drawLineChart(res.data.data,res.data.title);
 
                 })
             }
             if(newValue=='option3'){
-                axios.get('/analyse/linecharm/comment').then(res => { // url即在mock.js中定义的
+                const params = {
+                    repo_name: this.reponame,
+                    start_time: this.form.since,
+                    end_time: this.form.until
+                };
+                axios.get('/api/analyse/line/comment',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data)
                     console.log(res.data.data)// 打印一下响应数据
                     this.drawLineChart(res.data.data,res.data.title);
@@ -200,6 +262,10 @@ export default {
                     {   name: 'negative',
                         data: data.neg,
                         type: 'line'
+                    },
+                    {   name: 'neutral',
+                        data: data.neu,
+                        type: 'line'
                     }
                 ]
             };
@@ -227,12 +293,16 @@ export default {
                         type: 'pie',
                         data: [
                             {
-                                value: data[0],
+                                value: data.pos[0],
                                 name: 'positive'
                             },
                             {
-                                value: data[1],
-                                name: 'negtive'
+                                value: data.neu[0],
+                                name: 'neutral'
+                            },
+                            {
+                                value: data.neg[0],
+                                name: 'negative'
                             }
                         ],
                         radius:'50%',
@@ -246,8 +316,25 @@ export default {
                 ]
             };
             mychart.setOption(option);
-        }
+        },
 
+        disabledDateSince(date) {
+            return date < new Date(this.earliestTime);
+        },
+        disabledDateUntil(date) {
+            return date < new Date(this.form.since);
+        },
+        saveRepoDate(){
+            this.form.since=this.dateFormat(this.form.since)
+            this.form.until=this.dateFormat(this.form.until)
+            console.log(this.form.since,this.form.until)
+            this.getPieData('option2');
+            this.getLineData('option2');
+        },
+        dateFormat(date) {
+            const this_date = new Date(date);
+            return this_date.getFullYear() + '-' + (this_date.getMonth() + 1) + '-' + this_date.getDate();
+        },
     }
 
 

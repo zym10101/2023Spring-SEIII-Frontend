@@ -397,7 +397,7 @@ export default {
         type: 'success'
       });
       this.scrapy_status = '情感分析中，请稍候……';
-      axios.get("/api/issue/cal-Senti").then((res) => {
+      axios.get("/api/issue/cal-senti").then((res) => {
         this.$router.push({
           // 跳转到的页面名
           name: 'analyse',

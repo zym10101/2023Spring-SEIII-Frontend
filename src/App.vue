@@ -1,5 +1,5 @@
 <template>
-    <nav  class="navbar">
+    <nav  class="navbar" style="z-index: 9999">
         <ul class="navbar-menu">
             <li class="navbar-item">
                 <div class="navbar-logo">
