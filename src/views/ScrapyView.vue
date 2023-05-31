@@ -185,6 +185,7 @@ export default {
     this.form.since = Date.now();
     this.form.until = Date.now();
     this.form.email = "3320415065@qq.com";
+    this.tableData = localStorage.getItem('tableData')===null?[]:JSON.parse(localStorage.getItem('tableData'))
   },
   methods: {
     filterTag(value, row) {
@@ -276,7 +277,7 @@ export default {
       }
     },
     checkScrapyNotFinish() {
-      if (this.scrapy_status !== '数据爬取完成') {
+      if (this.tableData.length ===0) {
         this.$message({
           message: '数据不存在',
           type: 'error'
@@ -305,6 +306,7 @@ export default {
             this.form
         ).then((res) => {
           console.log(res)
+          let tempData = []
           res.data.forEach(item => {
             let labelsName = "";
             item.labels.forEach(_item => {
@@ -316,8 +318,11 @@ export default {
             commentTable.forEach(_item => {
               _item.user = _item.user.login
             })
-            this.tableData = this.tableData.concat(item)
+            tempData = tempData.concat(item)
+            this.tableData = tempData
           })
+          localStorage.clear();
+          localStorage.setItem('tableData',JSON.stringify(this.tableData));
           this.$message({
             message: '数据爬取完成',
             type: 'success'
