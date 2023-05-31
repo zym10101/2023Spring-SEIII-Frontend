@@ -128,9 +128,9 @@
   margin-top: 20px;
   margin-left: 12px;
 
-    &:hover {
-       background: #71b5ac;
-    }
+  &:hover {
+     background: #71b5ac;
+   }
 
 }
 .successButton {
@@ -138,7 +138,7 @@
 
   &:hover {
      background: #566573;
-  }
+   }
 }
 
 
