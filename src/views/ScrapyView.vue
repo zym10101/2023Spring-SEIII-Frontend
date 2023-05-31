@@ -11,50 +11,35 @@
         </el-form-item>
         <el-form-item label="版本时间">
           <el-col :span="9" style="margin-right: 10px">
-            <el-date-picker type="date" :disabled-date="disabledDate" placeholder="起始时间" v-model="form.since"
+            <el-date-picker type="date" :disabled-date="disabledDateSince" placeholder="起始时间" v-model="form.since"
                             style="width: 100%;"></el-date-picker>
           </el-col>
           <el-col class="line" :span="1">至</el-col>
           <el-col :span="9" style="margin-right: 10px">
-            <el-date-picker type="date" placeholder="结束时间" v-model="form.until"
+            <el-date-picker type="date" :disabled-date="disabledDateUntil" placeholder="结束时间" v-model="form.until"
                             style="width:100%;"></el-date-picker>
           </el-col>
-          <el-button type="success">暂存</el-button>
-          <el-button type="warning">还原</el-button>
+          <el-button type="success" @click="saveRepoDate">暂存</el-button>
+          <el-button type="warning" @click="clearRepoDate">还原</el-button>
         </el-form-item>
         <el-form-item label="个人邮箱" prop="email" :rules="[
       { required: true, message: '请输入邮箱地址', trigger: 'blur' },
       { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
           <el-input v-model="form.email" autocomplete="off" style="width: 80%;margin-right: 10px"></el-input>
-          <el-button type="success">暂存</el-button>
-          <el-button type="warning">还原</el-button>
+          <el-button type="success" @click="saveEmail">暂存</el-button>
+          <el-button type="warning" @click="clearEmail">还原</el-button>
         </el-form-item>
         <el-form-item>
-          <el-col class="line" :span="11">当前项目:{{ repo_name }}</el-col>&nbsp;
-          <el-col class="line" :span="11">当前状态:{{ scrapy_status }}</el-col>
+          <el-col class="line" :span="11">项目配置:{{ repo_name }}</el-col>&nbsp;
+          <el-col class="line" :span="11">处理状态:{{ scrapy_status }}</el-col>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="primaryButton buttonitem" @click="onSubmit">提交配置</el-button>
           <el-button type="primary" class="primaryButton buttonitem" @click="crawling">爬取数据</el-button>
-          <el-button type="success" class="successButton buttonitem" id="scrapy_issue_detail"
-                     @click="dataTableVisible = true">查看详情
-          </el-button>
           <el-button type="success" class="successButton buttonitem" @click="chooseType">下载数据</el-button>
           <el-button type="success" class="successButton buttonitem" @click="analyse">情感分析</el-button>
         </el-form-item>
       </el-form>
-    </div>
-    <div class="dataTable">
-      <el-dialog v-model="dataTableVisible" title="问题列表">
-        <el-table :data="issueData" id="issueDataTable">
-          <el-table-column property="title" label="Title" width="150" show-overflow-tooltip/>
-          <el-table-column property="body" label="Body" width="150" show-overflow-tooltip/>
-          <el-table-column property="labels" label="Labels" width="150" show-overflow-tooltip/>
-          <el-table-column property="created_at" label="Create_at" width="150" show-overflow-tooltip/>
-          <el-table-column property="updated_at" label="Update_at" width="150" show-overflow-tooltip/>
-          <el-table-column property="user" label="User" width="150" show-overflow-tooltip/>
-        </el-table>
-      </el-dialog>
     </div>
     <div class="type">
       <el-dialog v-model="chooseTypeVisible" title="请选择下载格式">
@@ -74,11 +59,65 @@
         </template>
       </el-dialog>
     </div>
+    <div class="data-container" style="width: 80%;margin-left: 15%;margin-top: 10%;margin-bottom: 20%">
+      <h1>数据详情</h1>
+      <div>
+        <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" ref="filterTable">
+          <el-table-column type="expand">
+            <template #default="props">
+              <div m="4">
+                <el-table :data="props.row.issue_comments" :border="childBorder">
+                  <el-table-column label="CommentBody" prop="body" show-overflow-tooltip/>
+                  <el-table-column label="CreatedAt" prop="created_at" show-overflow-tooltip sortable/>
+                  <el-table-column label="UpdatedAt" prop="updated_at" show-overflow-tooltip sortable/>
+                  <el-table-column label="LoginUser" prop="user" show-overflow-tooltip/>
+                </el-table>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="id" label="IssueId" width="100" show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column prop="state" label="IssueState" width="130" show-overflow-tooltip
+                           :filters="[{ text: 'open', value: 'open' }, { text: 'closed', value: 'closed' }]"
+                           :filter-method="filterTag"
+                           filter-placement="bottom-end">
+            <template v-slot="scope">
+              <el-tag
+                  :type="scope.row.state === 'open' ? 'success' : 'warning'"
+                  disable-transitions>{{ scope.row.state }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="title" label="IssueTitle" width="130" show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column prop="body" label="IssueBody" width="130" show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column prop="labels" label="IssueLabels" width="130" show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column prop="created_at" label="CreatedAt" width="130" show-overflow-tooltip sortable>
+          </el-table-column>
+          <el-table-column prop="updated_at" label="UpdatedAt" width="130" show-overflow-tooltip sortable>
+          </el-table-column>
+          <el-table-column prop="user" label="LoginUser" show-overflow-tooltip>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="block" style="margin-top:15px;">
+        <el-pagination align='center' @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[1,5,10,20]"
+                       :page-size="pageSize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="tableData.length">
+        </el-pagination>
+      </div>
+    </div>
+
   </div>
 </template>
 <style>
 .buttonitem {
-  width: 18%;
+  width: 20%;
   background: #4ea397;
   color: white;
   border-radius: 15px;
@@ -126,8 +165,10 @@ export default {
   name: "ScrapyView",
   data() {
     return {
-      issueData: [],
-      dataTableVisible: false,
+      tableData: [],
+      currentPage: 1, // 当前页码
+      total: 20, // 总条数
+      pageSize: 20, // 每页的数据条数
       chooseTypeVisible: false,
       form: {
         repo: "",
@@ -148,8 +189,25 @@ export default {
     this.form.email = "3320415065@qq.com";
   },
   methods: {
-    disabledDate(date) {
+    filterTag(value, row) {
+      return row.state === value;
+    },
+    //每页条数改变时触发 选择一页显示多少行
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.currentPage = 1;
+      this.pageSize = val;
+    },
+    //当前页改变时触发 跳转其他页
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.currentPage = val;
+    },
+    disabledDateSince(date) {
       return date < new Date(this.earliestTime);
+    },
+    disabledDateUntil(date) {
+      return date < new Date(this.form.since);
     },
     saveRepoName() {
       axios.get('/api/issue/earliest', {
@@ -166,6 +224,25 @@ export default {
     },
     clearRepoName() {
       this.form.repo = ''
+    },
+    saveRepoDate() {
+      this.$message({
+        message: '版本时间保存成功！',
+        type: 'success'
+      });
+    },
+    clearRepoDate() {
+      this.form.since = Date.now();
+      this.form.until = Date.now();
+    },
+    saveEmail() {
+      this.$message({
+        message: '个人邮箱保存成功！',
+        type: 'success'
+      });
+    },
+    clearEmail() {
+      this.form.email = ''
     },
     onSubmit() {
       if (this.form.repo === '' || this.form.email === '') {
@@ -221,23 +298,30 @@ export default {
       this.form.since = this.dateFormat(this.form.since)
       this.form.until = this.dateFormat(this.form.until)
       axios.post(
-          "api/crawling",
+          "api/crawling/new",
           this.form
       ).then((res) => {
-        res.data.forEach(item => {
-          let labelsName = "";
-          item.labels.forEach(_item => {
-            labelsName += _item.name + " ";
+        console.log(res)
+        axios.post(
+            "/api/download",
+            this.form
+        ).then((res) => {
+          console.log(res)
+          res.data.forEach(item => {
+            let labelsName = "";
+            item.labels.forEach(_item => {
+              labelsName += _item.name + " ";
+            })
+            item.labels = labelsName
+            item.user = item.user.login
+            this.tableData = this.tableData.concat(item)
           })
-          item.labels = labelsName
-          item.user = item.user.login
-          this.issueData = this.issueData.concat(item)
+          this.$message({
+            message: '数据爬取完成',
+            type: 'success'
+          });
+          this.scrapy_status = '数据爬取完成'
         })
-        this.$message({
-          message: '数据爬取完成',
-          type: 'success'
-        });
-        this.scrapy_status = '数据爬取完成'
       })
     },
     dateFormat(date) {
@@ -245,7 +329,7 @@ export default {
       return this_date.getFullYear() + '-' + (this_date.getMonth() + 1) + '-' + this_date.getDate();
     },
     generateData(format) {
-      const data = this.issueData;
+      const data = this.tableData;
       if (format === 'csv') {
         const csvData = Papa.unparse(data);
         return {data: csvData, extension: 'csv'};
@@ -273,7 +357,7 @@ export default {
         return {data: xlsxData, extension: 'xlsx'};
       } else if (format === 'txt') {
         let txtData = '';
-        txtData += "Title\tBody\tLabels\tCreated_at\tUpdated_at\tUser\n";
+        txtData += "IssueTitle\tIssueBody\tIssueLabels\tCreatedAt\tUpdatedAt\tLoginUser\n";
         data.forEach(item => {
           txtData += `${item.title}\t${item.body}\t${item.labels}\t${item.created_at}\t${item.updated_at}\t${item.user}\n`;
         });
