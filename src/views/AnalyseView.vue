@@ -1,6 +1,5 @@
 <template>
     <div class="app">
-
         <h1>{{ this.reponame }}情绪分析可视化结果</h1>
         <el-form class="datefrom" ref="form" :model="form" label-width="20%">
           <el-row>
@@ -16,8 +15,6 @@
               </el-col>
           </el-row>
         </el-form>
-
-
 
 
         <h2>项目粒度分析</h2>
@@ -41,6 +38,30 @@
             </select>
         </div>
         <div id="LineOfAll" style="width: 90%;height: 600px;"></div>
+
+        <h3 style="text-align: left">label情绪对比图</h3>
+
+        <div  style="margin-top: 16px;margin-bottom: 5px">
+            <p style="text-align: left">项目labels：</p>
+            <div class="options">
+                <div class="option" v-for="option in options" :key="option.value"  style="margin-top: 10px">
+                    <label  style="width: 200px; text-align: left;">
+                        <input type="checkbox" v-model="selectedOptions" :value="option.value" @change="submitSelectedOptions" />
+                        {{ option.label }}
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="selectedbox">
+            <select v-model="selectedLalel" class="box" >
+                <option value="option1">issues and comments</option>
+                <option value="option2">issues</option>
+                <option value="option3">comments</option>
+            </select>
+        </div>
+        <div id="LineOfLabel" style="width: 90%;height: 600px;"></div>
+
         <h1>个人粒度分析</h1>
     </div>
 
@@ -75,15 +96,25 @@ h1{
     font-family: Arial, sans-serif;
 }
 
+.options {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.option {
+    ;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
 </style>
 
 <script >
 import axios from "axios";
 import * as echarts from "echarts";
 import mytheme1 from "../assets/wonderland.json"
-
-
-
 
 export default {
     data() {
@@ -92,6 +123,7 @@ export default {
             data: [],
             selectedPie: null,
             selectedLine:null,
+            selectedLalel:null,
             curTheme:mytheme1 ,
             reponame: "apache/superset",
             form: {
@@ -101,13 +133,19 @@ export default {
             },
             earliestTime: "2022-3-1",
             latestTime: "2023-5-31",
+            //label选项列表
+            options: [], // 存储从后端获取的选项值列表
+            selectedOptions: [], // 存储被选择的选项值
+            labelopthion:""
         };
     },
     mounted() {
         this.form.since=this.earliestTime;
         this.form.until=this.latestTime;
-       this.getPieData('option2');
-       this.getLineData('option2');
+        this.getPieData('option2');
+        this.getLineData('option2');
+        this.fetchOptions();
+        this.drawInitLineLabel();
 
     },
     watch: {
@@ -123,24 +161,25 @@ export default {
             console.log(oldValue,newValue)
             this.getLineData(newValue);
         },
+        selectedLalel(newvalue){
+            console.log("改变选项",newvalue)
+            this.labelopthion=newvalue
+            this.submitSelectedOptions()
+        }
 
     },
     methods:{
 
         getPieData(newValue){
-            const params = {
-                repo_name: this.reponame,
-                start_time: this.form.since,
-                end_time: this.form.until
-            };
-            if(newValue=='option1'){
-                axios.get('/api/analyse/pie/all',{params}).then(res => { // url即在mock.js中定义的
-                    console.log(res.data)
-                    console.log(res.data.data)// 打印一下响应数据
-                    this.drawPieChart(res.data.data,res.data.title);
-
-                })
-            }
+            const element="PieOfAll";
+            // if(newValue=='option1'){
+            //     axios.get('/api/analyse/pie/all',{params}).then(res => { // url即在mock.js中定义的
+            //         console.log(res.data)
+            //         console.log(res.data.data)// 打印一下响应数据
+            //         this.drawPieChart(element,res.data.data,res.data.title);
+            //
+            //     })
+            // }
             if(newValue=='option2'){
                 const params = {
                     repo_name: this.reponame,
@@ -150,7 +189,7 @@ export default {
                 console.log("change to 2")
                 axios.get('/api/analyse/pie/issue',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data.data)// 打印一下响应数据
-                    this.drawPieChart(res.data.data,res.data.title);
+                    this.drawPieChart(element,res.data.data,"项目总体情绪占比图");
 
                 })
             }
@@ -163,7 +202,7 @@ export default {
                 axios.get('/api/analyse/pie/comment',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data)
                     console.log(res.data.data)// 打印一下响应数据
-                    this.drawPieChart(res.data.data,res.data.title);
+                    this.drawPieChart(element,res.data.data,res.data.title);
 
                 })
             }
@@ -175,6 +214,7 @@ export default {
             //     console.log(res.data.title)
             //     this.drawLineChart(res.data.data,res.data.title)
             // })
+            const element="LineOfAll";
             if(newValue=='option1'){
                 const params = {
                     repo_name: this.reponame,
@@ -184,7 +224,7 @@ export default {
                 axios.get('/api/analyse/line/all', { params }).then(res => { // url即在mock.js中定义的
                     console.log(res.data)
                     console.log(res.data.data)// 打印一下响应数据
-                    this.drawLineChart(res.data.data,res.data.title);
+                    this.drawLineChart(element,res.data.data,res.data.title);
 
                 })
             }
@@ -197,7 +237,7 @@ export default {
                 };
                 axios.get('/api/analyse/line/issue',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data.data)// 打印一下响应数据
-                    this.drawLineChart(res.data.data,res.data.title);
+                    this.drawLineChart(element,res.data.data,res.data.title);
 
                 })
             }
@@ -210,18 +250,18 @@ export default {
                 axios.get('/api/analyse/line/comment',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data)
                     console.log(res.data.data)// 打印一下响应数据
-                    this.drawLineChart(res.data.data,res.data.title);
+                    this.drawLineChart(element,res.data.data,res.data.title);
 
                 })
             }
         },
-        drawLineChart(data,title){
-            const chartContainer = document.getElementById('LineOfAll');
+        drawLineChart(element,data,title){
+            const chartContainer = document.getElementById(element);
             const mychart = echarts.init(chartContainer,this.curTheme);
             window.addEventListener('resize', function() {
                 mychart.resize();
             });
-
+            console.log(element)
 
             const option = {
                 title: {
@@ -231,7 +271,7 @@ export default {
                     trigger: 'axis'
                 },
                 grid: {
-                    left: '3%',
+                    left: '10%',
                     right: '4%',
                     bottom: '3%',
                     containLabel: true
@@ -251,7 +291,10 @@ export default {
                 xAxis: {
                     type: 'category',
                     boundaryGap: false,
-                    data: data.xAxis
+                    data: data.xAxis,
+                    axisLabel: {
+                        rotate: 45 // 设置标签旋转角度，单位为度，默认为 0
+                    }
                 },
                 yAxis: {},
                 series: [
@@ -271,9 +314,9 @@ export default {
             };
             mychart.setOption(option);
         },
-        drawPieChart(data,title) {
+        drawPieChart(element,data,title) {
 
-            const chartContainer = document.getElementById('PieOfAll');
+            const chartContainer = document.getElementById(element);
             const mychart = echarts.init(chartContainer,this.curTheme);
             window.addEventListener('resize', function() {
                 mychart.resize();
@@ -335,6 +378,86 @@ export default {
             const this_date = new Date(date);
             return this_date.getFullYear() + '-' + (this_date.getMonth() + 1) + '-' + this_date.getDate();
         },
+        fetchOptions() {
+            // 向后端发起请求获取选项值列表的逻辑
+            // 可以使用 Axios 或其他请求库进行请求
+            // 请求成功后将返回的数据赋值给 options
+            // 示例：模拟异步请求延迟，并设置示例选项值列表
+            const params = {
+                repo_name: this.reponame,
+                start_time: this.form.since,
+                end_time: this.form.until
+            };
+
+            axios.get('/api/get-issue-labels',{params}).then(res => { // url即在mock.js中定义的
+                console.log(res.data)
+                this.options = res.data.map((item) => ({ value: item, label: item }));
+            })
+        },
+        submitSelectedOptions() {
+            // 将选择的选项值提交给后端的逻辑
+            // 可以在这里使用 Axios 或其他请求库发送请求，并将 selectedOptions 作为请求参数传递给后端
+            // 示例：打印被选择的选项值
+            const params = {
+                repo_name: this.reponame,
+                start_time: this.form.since,
+                end_time: this.form.until,
+                weighting:0.7,
+                labels:Array.from(this.selectedOptions)
+            };
+            console.log("参数：",params)
+            let url;
+            let title;
+            //没有选择label时
+            if(params.labels.length===0){
+                this.drawInitLineLabel()
+            }else {
+                if(this.labelopthion==="option1"){
+                    url='/api/analyse/line/all/label'
+                    title ="label情绪对比图--issue+comment"
+                }
+                if(this.labelopthion==="option2"){
+                    url='/api/analyse/line/issue/label'
+                    title ="label情绪对比图--issue"
+                }
+                if(this.labelopthion==="option3"){
+                    url='/api/analyse/line/comment/label'
+                    title ="label情绪对比图--comment"
+                }
+                axios.post(url, params).then(res => { // url即在mock.js中定义的
+                    console.log(res.data)
+                    this.drawLineChart("LineOfLabel",res.data.data,title)
+                    // this.options = res.data.map((item) => ({ value: item, label: item }));
+                })
+                console.log('被选择的选项值：', this.selectedOptions);
+
+            }
+        },
+
+        async drawInitLineLabel() {
+            // 将选择的选项值提交给后端的逻辑
+            // 可以在这里使用 Axios 或其他请求库发送请求，并将 selectedOptions 作为请求参数传递给后端
+            // 示例：打印被选择的选项值
+            let params = {
+                repo_name: this.reponame,
+                start_time: this.form.since,
+                end_time: this.form.until,
+            };
+            console.log(params)
+            params={
+                repo_name: this.reponame,
+                start_time: this.form.since,
+                end_time: this.form.until,
+                weighting: 0.7,
+                labels:(await axios.get('/api/get-most-used-labels', {params})).data
+            }
+            console.log(params)
+            axios.post("/api/analyse/line/all/label",params).then(res=>{
+                console.log(res.data)
+                this.drawLineChart("LineOfLabel",res.data.data,res.data.title)
+            })
+
+        }
     }
 
 

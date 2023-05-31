@@ -33,7 +33,7 @@
                         <input v-model="registerForm.username" type="text" placeholder="enter your username"  />
 
                         <p class="input_title">password</p>
-                        <input v-model="registerForm.password" type="password" placeholder="enter your password：密码必须大于8位且包含数字、大写字母、小写字母和特殊字符中的三种" v-validator="passwordOption" />
+                        <input v-model="registerForm.password" type="password" placeholder="enter your password：密码必须大于8位且包含数字、大写字母、小写字母" v-validator="passwordOption" />
                         <p v-if="!isvaildpwd" class="errorText">密码必须大于8位且包含数字、大写字母、小写字母和特殊字符中的三种</p>
 
                         <p class="input_title">repeat password</p>
@@ -111,7 +111,7 @@ export default {
             return  this.registerForm.email.length==0 || emailRegex.test(this.registerForm.email) ;
         },
         isvaildpwd(){
-            const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/ ;
+            const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
             return pwdRegex.test(this.registerForm.password) || this.registerForm.password.length==0 ;
         },
         issamepwd(){
