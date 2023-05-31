@@ -128,21 +128,19 @@
   margin-top: 20px;
   margin-left: 12px;
 
-&
-:hover {
-  background: #71b5ac;
-}
+    &:hover {
+       background: #71b5ac;
+    }
 
 }
 .successButton {
   background: #2c3e50;
 
-&
-:hover {
-  background: #566573;
+  &:hover {
+     background: #566573;
+  }
 }
 
-}
 
 .el-radio__input.is-checked .el-radio__inner {
   border-color: #71b5ac;
@@ -314,6 +312,10 @@ export default {
             })
             item.labels = labelsName
             item.user = item.user.login
+            let commentTable = item.issue_comments
+            commentTable.forEach(_item => {
+              _item.user = _item.user.login
+            })
             this.tableData = this.tableData.concat(item)
           })
           this.$message({
