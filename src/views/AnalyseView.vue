@@ -16,9 +16,9 @@
           </el-row>
         </el-form>
 
-
         <h2>项目粒度分析</h2>
         <div class="selectedbox" >
+            <label for="selectBox" class="placeholder" style="font-size: 16px">请选择范围：</label>
             <select v-model="selectedPie" class="box" >
 <!--                <option value="option1">issues and comments</option>-->
                 <option value="option2">issues</option>
@@ -31,6 +31,7 @@
 
 
         <div class="selectedbox">
+            <label for="selectBox" class="placeholder" style="font-size: 16px">请选择范围：</label>
             <select v-model="selectedLine" class="box" >
 <!--                <option value="option1">issues and comments</option>-->
                 <option value="option2">issues</option>
@@ -38,6 +39,9 @@
             </select>
         </div>
         <div id="LineOfAll" style="width: 90%;height: 600px;"></div>
+
+
+        <!--        label-->
 
         <h3 style="text-align: left">label情绪对比图</h3>
 
@@ -54,6 +58,7 @@
         </div>
 
         <div class="selectedbox">
+            <label for="selectBox" class="placeholder" style="font-size: 16px">请选择范围：</label>
             <select v-model="selectedLalel" class="box" >
                 <option value="option1">issues and comments</option>
                 <option value="option2">issues</option>
@@ -62,7 +67,48 @@
         </div>
         <div id="LineOfLabel" style="width: 90%;height: 600px;"></div>
 
+<!--        reaction-->
+        <h3 style="text-align: left;margin-top: 50px">Reaction情绪对比图</h3>
+        <div class="selectedbox">
+            <label for="selectBox" class="placeholder" style="font-size: 16px">请选择范围：</label>
+            <select v-model="selectedLineReaction" class="box" id="selectBox" >
+                <option value="option1">issues and comments</option>
+                <option value="option2">issues</option>
+                <option value="option3">comments</option>
+            </select>
+        </div>
+        <div id="LineOfReaction" style="width: 90%;height: 600px;"></div>
+
         <h1>个人粒度分析</h1>
+
+        <h3 style="text-align: left">个人情绪波动图</h3>
+      <div>
+
+          <div class="selectedbox">
+              <select v-model="selectedLineUser" class="box" placeholder="Select an option" >
+                  <label for="selectBox" class="placeholder" style="font-size: 16px">请选择范围：</label>
+                  <option value="option1">issues and comments</option>
+                  <option value="option2">issues</option>
+                  <option value="option3">comments</option>
+              </select>
+          </div>
+
+          <div class="dropdown" style="margin-bottom: 20px" >
+              <el-text style="margin-left: 20px;font-size: 16px">请选择user: </el-text>
+              <el-select v-model="searchQuery"  filterable >
+                  <el-option
+                          v-for="item in items"
+                          :key="item"
+                          :label="item"
+                          :value="item"
+                          @click="HandleClick"
+                  />
+              </el-select>
+          </div>
+      </div>
+
+        <div id="LineOfUser" style="width: 90%;height: 600px;margin-top: 80px"></div>
+
     </div>
 
 </template>
@@ -81,19 +127,33 @@
     left: 400px;
     z-index: 999;
 }
+.dropdown{
+    position: absolute;
+    left: 15px;
+    z-index: 999;
+}
+.el-input__wrapper{
+    width: 200px;
+    height: 2px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #252525;
+}
 h1{
     margin: 20px;
 }
 .box {
     width: 300px;
-    height: 20px;
-    padding: 10px;
-    border: 2px solid #ccc;
+    height: 25px;
+    //padding: 10px;
+    border: 3px solid #ccc;
     border-radius: 5px;
-    font-size: 16px;
-    color: #333;
-    background-color: #f7f7f7;
-    font-family: Arial, sans-serif;
+    //font-size: 16px;
+    //color: #333;
+    //background-color: #f7f7f7;
+    //font-family: Arial, sans-serif;
 }
 
 .options {
@@ -124,6 +184,8 @@ export default {
             selectedPie: null,
             selectedLine:null,
             selectedLalel:null,
+            selectedLineReaction:null,
+            selectedLineUser:null,
             curTheme:mytheme1 ,
             reponame: "apache/superset",
             form: {
@@ -136,8 +198,19 @@ export default {
             //label选项列表
             options: [], // 存储从后端获取的选项值列表
             selectedOptions: [], // 存储被选择的选项值
-            labelopthion:""
+            labelopthion:"option1",
+            //个人分析
+            searchQuery: '',
+            isDropdownOpen: false,
+            items: [],
+            clickedItem: null,
         };
+    },
+    props: {
+        placeholder: {
+            type: String,
+            default: 'Search...',
+        },
     },
     mounted() {
         this.form.since=this.earliestTime;
@@ -146,6 +219,8 @@ export default {
         this.getLineData('option2');
         this.fetchOptions();
         this.drawInitLineLabel();
+        this.getLineReaction("option1");
+        this.getAllUser()
 
     },
     watch: {
@@ -165,7 +240,16 @@ export default {
             console.log("改变选项",newvalue)
             this.labelopthion=newvalue
             this.submitSelectedOptions()
+        },
+        selectedLineReaction(newvalue){
+            console.log("改变选项",newvalue)
+            this.getLineReaction(newvalue);
+        },
+        selectedLineUser(newvalue){
+            console.log("user变选项",newvalue)
+            this.UserChangeOption(newvalue);
         }
+
 
     },
     methods:{
@@ -248,10 +332,8 @@ export default {
                     end_time: this.form.until
                 };
                 axios.get('/api/analyse/line/comment',{params}).then(res => { // url即在mock.js中定义的
-                    console.log(res.data)
                     console.log(res.data.data)// 打印一下响应数据
                     this.drawLineChart(element,res.data.data,res.data.title);
-
                 })
             }
         },
@@ -339,14 +421,15 @@ export default {
                                 value: data.pos[0],
                                 name: 'positive'
                             },
+
+                            {
+                                value: data.neg[0],
+                                name: 'negative'
+                            },
                             {
                                 value: data.neu[0],
                                 name: 'neutral'
                             },
-                            {
-                                value: data.neg[0],
-                                name: 'negative'
-                            }
                         ],
                         radius:'50%',
                         label: {
@@ -457,8 +540,101 @@ export default {
                 this.drawLineChart("LineOfLabel",res.data.data,res.data.title)
             })
 
-        }
-    }
+        },
+
+        getLineReaction(newvalue){
+            let url="";
+            let title="";
+            const params ={
+                repo_name: this.reponame,
+                start_time: this.form.since,
+                end_time: this.form.until,
+                weighting: 0.7
+            }
+            //http://localhost:5000/analyse/line/all/reaction?repo_name=apache/superset&start_time=2022-3-1&end_time=2023-5-31&weighting=0.7
+            //http://localhost:5000/analyse/line/all/reaction?repo_name="apache/superset"&start_time=2022-3-1&end_time=2023-5-31&weighting=0.7
+            //
+            if(newvalue==="option1"){
+                url='/api/analyse/line/all/reaction'
+                title ="reaction情绪对比图--issue+comment"
+            }
+            if(newvalue==="option2"){
+                url='/api/analyse/line/issue/reaction'
+                title ="reaction情绪对比图--issue"
+            }
+            if(newvalue==="option3"){
+                url='/api/analyse/line/comment/reaction'
+                title ="reaction情绪对比图--comment"
+            }
+            console.log("reaction",params)
+            axios.post(url,params).then(res => { // url即在mock.js中定义的
+                console.log(res.data.data)// 打印一下响应数据
+                this.drawLineChart("LineOfReaction",res.data.data,title);
+            })
+        },
+        //个人分析粒度
+        HandleClick(){
+            console.log(this.searchQuery)
+            const param = {
+                repo_name: this.reponame,
+                start_time: "2022-5-1",
+                end_time: "2023-5-31",
+                user: this.searchQuery
+            };
+            console.log("发送user请求")
+            axios.post("/api/analyse/line/issue/user", param )
+                .then((response) => {
+                    console.log(response.data)
+                    const title=this.searchQuery+"的情绪波动图--issue+comment"
+                    this.drawLineChart("LineOfUser",response.data.data,title)
+                })
+        },
+        UserChangeOption(newvalue){
+            let url="";
+            let title="";
+            const params = {
+                repo_name: this.reponame,
+                start_time: "2022-5-1",
+                end_time: "2023-5-31",
+                user: this.searchQuery
+            };
+            //http://localhost:5000/analyse/line/all/reaction?repo_name=apache/superset&start_time=2022-3-1&end_time=2023-5-31&weighting=0.7
+            //http://localhost:5000/analyse/line/all/reaction?repo_name="apache/superset"&start_time=2022-3-1&end_time=2023-5-31&weighting=0.7
+            //
+            if(newvalue==="option1"){
+                url='/api/analyse/line/all/user'
+                title =this.searchQuery+"的情绪波动图--issue+comment"
+            }
+            if(newvalue==="option2"){
+                url='/api/analyse/line/issue/user'
+                title =this.searchQuery+"的情绪波动图--issue"
+            }
+            if(newvalue==="option3"){
+                url='/api/analyse/line/comment/user'
+                title =this.searchQuery+"的情绪波动图--comment"
+            }
+            axios.post(url,params).then(res => { // url即在mock.js中定义的
+                console.log(res.data.data)// 打印一下响应数据
+                this.drawLineChart("LineOfUser",res.data.data,title);
+            })
+        },
+        getAllUser(){
+            const params = {
+                repo_name: this.reponame,
+                start_time: "2022-5-1",
+                end_time: "2023-5-31"
+            };
+            const url="/api/get-issue-users";
+            axios.post(url, params).then( res=>{
+                console.log(res.data)
+                this.items=res.data.map((item)=>(item))
+                this.searchQuery=this.items[0];
+                this.HandleClick();
+            })
+        },
+    },
+
+
 
 
 };
