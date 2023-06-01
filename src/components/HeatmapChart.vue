@@ -36,12 +36,22 @@ export default {
           trigger: 'item',
           showDelay: 0,
           formatter: function (params) {
+            let content = '<div class="echarts-tooltip" style="max-width: 1000px;max-height: 1000px">';
             const data = params.data
             if (data.value[0] !== undefined) {
-              return `情绪方面：${data.name}<br>情绪值：${data.value[1]}<br>数量：${data.value[0]}<br>情绪文本：${data.context}`
-            } else {
-              return null;
+              content += `情绪方面：${data.name}<br>情绪值：${data.value[1]}<br>数量：${data.value[0]}<br>`;
+              var additionalContent = `情绪文本：${data.context}`;
+              var lines = Math.ceil(additionalContent.length / 120); // 假设每行最多显示10个字符
+              for (var i = 0; i < lines; i++) {
+                var startIndex = i * 120;
+                var endIndex = startIndex + 120;
+                var line = additionalContent.substring(startIndex, endIndex);
+                content += line + '<br>';
+              }
+              return content;
             }
+            content += '</div>';
+            return content;
           },
           axisPointer: {
             show: true,
@@ -159,5 +169,8 @@ export default {
 </script>
 
 <style>
-
+.echarts-tooltip {
+  /* 其他样式 */
+  word-break: break-all; /* 使用 break-word 实现自动换行 */
+}
 </style>
