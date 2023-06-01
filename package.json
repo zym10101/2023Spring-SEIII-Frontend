@@ -10,8 +10,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@amcharts/amcharts4": "^4.10.36",
     "@mediv0/validator": "^1.0.1",
     "axios": "^1.4.0",
+    "chart.js": "^4.3.0",
     "core-js": "^3.8.3",
     "csv": "^6.3.0",
     "echarts": "^5.4.2",
