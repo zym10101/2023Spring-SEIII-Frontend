@@ -33,20 +33,18 @@ export default {
           containLabel: true
         },
         tooltip: {
+          enterable: true,
           trigger: 'item',
           showDelay: 0,
           formatter: function (params) {
-            let content = '<div class="echarts-tooltip" style="max-width: 1000px;max-height: 1000px">';
+            let content = '<div class="echarts-tooltip">';
             const data = params.data
             if (data.value[0] !== undefined) {
-              content += `情绪方面：${data.name}<br>情绪值：${data.value[1]}<br>数量：${data.value[0]}<br>`;
-              var additionalContent = `情绪文本：${data.context}`;
-              var lines = Math.ceil(additionalContent.length / 120); // 假设每行最多显示10个字符
-              for (var i = 0; i < lines; i++) {
-                var startIndex = i * 120;
-                var endIndex = startIndex + 120;
-                var line = additionalContent.substring(startIndex, endIndex);
-                content += line + '<br>';
+              content += `情绪方面：${data.name}<br>情绪值：${data.value[1]}<br>句子数量：${data.value[0]}<br>具体文本：<br>`;
+              var additionalContent = `${data.context}`;
+              var strings = additionalContent.split(',');
+              for (var i = 0; i < strings.length; i++) {
+                content += (i + 1) +'. ' + strings[i] + '<br>';
               }
               return content;
             }
@@ -110,10 +108,10 @@ export default {
               focus: 'series'
             },
             symbolSize: function (params) {
-              if (params[0] * 3 + params[1] * 6 < 0) {
+              if (params[0] * 3 + params[1] * 10 < 0) {
                 return 1;
               }
-              return params[0] * 3 + params[1] * 6;
+              return params[0] * 3 + params[1] * 10;
             },
             label: {
               show: true, // 显示标签
@@ -124,14 +122,6 @@ export default {
               },
             },
             data: _data,
-            // data: [
-            //   {name: 'aspect1', value: [8, 2.1], context: ['context1', 'context1']},
-            //   {name: 'aspect2', value: [6, 1.2], context: ['context2', 'context1']},
-            //   {name: 'aspect3', value: [9, -2.0], context: ['context3', 'context1']},
-            //   {name: 'aspect4', value: [10, -0.7], context: ['context3', 'context1']},
-            //   {name: 'aspect5', value: [10, -1.8], context: ['context3', 'context1']},
-            //   {name: 'aspect6', value: [20, 2.2], context: ['context3', 'context1']},
-            // ],
             markArea: {
               silent: true,
               itemStyle: {
@@ -170,7 +160,9 @@ export default {
 
 <style>
 .echarts-tooltip {
-  /* 其他样式 */
-  word-break: break-all; /* 使用 break-word 实现自动换行 */
+  text-align: left;
+  max-width: 400px;
+  max-height: 300px;
+  overflow: auto;
 }
 </style>
