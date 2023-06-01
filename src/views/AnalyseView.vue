@@ -54,7 +54,7 @@
         </div>
 
         <div class="selectedbox">
-            <select v-model="selectedLalel" class="box" >
+            <select v-model="selectedLabel" class="box" >
                 <option value="option1">issues and comments</option>
                 <option value="option2">issues</option>
                 <option value="option3">comments</option>
@@ -71,7 +71,6 @@
 
 .app {
     /* 设置背景颜色 */
-    //background-color: rgba(254,248,239,1);
     background-color: white;
     margin-top: 100px;
 }
@@ -102,7 +101,6 @@ h1{
 }
 
 .option {
-    ;
     display: flex;
     align-items: center;
     margin-right: 10px;
@@ -123,7 +121,7 @@ export default {
             data: [],
             selectedPie: null,
             selectedLine:null,
-            selectedLalel:null,
+            selectedLabel:null,
             curTheme:mytheme1 ,
             reponame: "apache/superset",
             form: {
@@ -161,7 +159,7 @@ export default {
             console.log(oldValue,newValue)
             this.getLineData(newValue);
         },
-        selectedLalel(newvalue){
+        selectedLabel(newvalue){
             console.log("改变选项",newvalue)
             this.labelopthion=newvalue
             this.submitSelectedOptions()
@@ -189,7 +187,7 @@ export default {
                 console.log("change to 2")
                 axios.get('/api/analyse/pie/issue',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data.data)// 打印一下响应数据
-                    this.drawPieChart(element,res.data.data,"项目总体情绪占比图");
+                    this.drawPieChart(element,res.data.data,"项目总体情绪占比图 issue");
 
                 })
             }
@@ -202,7 +200,7 @@ export default {
                 axios.get('/api/analyse/pie/comment',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data)
                     console.log(res.data.data)// 打印一下响应数据
-                    this.drawPieChart(element,res.data.data,res.data.title);
+                    this.drawPieChart(element,res.data.data,"项目总体情绪占比图 comment");
 
                 })
             }
@@ -224,7 +222,7 @@ export default {
                 axios.get('/api/analyse/line/all', { params }).then(res => { // url即在mock.js中定义的
                     console.log(res.data)
                     console.log(res.data.data)// 打印一下响应数据
-                    this.drawLineChart(element,res.data.data,res.data.title);
+                    this.drawLineChart(element,res.data.data,"项目总体情绪随时间变化折线图 issue+comment");
 
                 })
             }
@@ -237,7 +235,7 @@ export default {
                 };
                 axios.get('/api/analyse/line/issue',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data.data)// 打印一下响应数据
-                    this.drawLineChart(element,res.data.data,res.data.title);
+                    this.drawLineChart(element,res.data.data,"项目总体情绪随时间变化折线图 issue");
 
                 })
             }
@@ -250,7 +248,7 @@ export default {
                 axios.get('/api/analyse/line/comment',{params}).then(res => { // url即在mock.js中定义的
                     console.log(res.data)
                     console.log(res.data.data)// 打印一下响应数据
-                    this.drawLineChart(element,res.data.data,res.data.title);
+                    this.drawLineChart(element,res.data.data,"项目总体情绪随时间变化折线图 comment");
 
                 })
             }
@@ -415,14 +413,15 @@ export default {
                 if(this.labelopthion==="option1"){
                     url='/api/analyse/line/all/label'
                     title ="label情绪对比图--issue+comment"
-                }
-                if(this.labelopthion==="option2"){
+                }else if(this.labelopthion==="option2"){
                     url='/api/analyse/line/issue/label'
                     title ="label情绪对比图--issue"
-                }
-                if(this.labelopthion==="option3"){
+                }else if(this.labelopthion==="option3"){
                     url='/api/analyse/line/comment/label'
                     title ="label情绪对比图--comment"
+                }else{
+                    url='/api/analyse/line/all/label'
+                    title ="label情绪对比图--issue+comment"
                 }
                 axios.post(url, params).then(res => { // url即在mock.js中定义的
                     console.log(res.data)
