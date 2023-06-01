@@ -598,9 +598,6 @@ export default {
                 end_time: "2023-5-31",
                 user: this.searchQuery
             };
-            //http://localhost:5000/analyse/line/all/reaction?repo_name=apache/superset&start_time=2022-3-1&end_time=2023-5-31&weighting=0.7
-            //http://localhost:5000/analyse/line/all/reaction?repo_name="apache/superset"&start_time=2022-3-1&end_time=2023-5-31&weighting=0.7
-            //
             if(newvalue==="option1"){
                 url='/api/analyse/line/all/user'
                 title =this.searchQuery+"的情绪波动图--issue+comment"
