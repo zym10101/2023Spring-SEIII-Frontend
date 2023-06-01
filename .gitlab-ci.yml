@@ -1,25 +1,47 @@
+# 这里是docker镜像，说明我们的整个流水线是在docker的node:alpine容器里面完成的
+# 不懂docker的可以简单理解为我们下面的所有任务是在一个有node环境的虚拟机里完成的
+# 这个虚拟机的默认的目录就是我们当前的项目里
+image: node:alpine
+# 这里是我们自定义了一些流水线的阶段
 stages:
+  - install
   - build
   - deploy
-
-build:
+# 因为每个任务中所有操作产生的新的文件在进行到下一个任务时都会被清除
+# 但有些我们不希望清楚，所以我们用到缓存，cache中定义的paths下的文件会被缓存到下一个任务中
+cache:
+  key: modules-cache
+  paths:
+    - node_modules
+    - dist
+# 这里是我们的第一个任务，它的名字叫job_install，这个名字是可以随便写的，也可以用中文
+job_install:
+  stage: install # 这里代表我们当前的任务处于install阶段
+  tags:
+    - frontend # 这里是当前任务的标签，标签是我们后面在gitlab-runner中定义的
+  script: # 每个任务都必须有script，顾名思义就是执行的语句
+    - npm install # 前面说的我们处于一个有node环境的虚拟机，那这句话就是在这个虚拟机的我们当前项目里执行npm install
+# 这是我们的第二个任务，逻辑和上面的第一个任务都一样，就不做详细说明
+job_build:
   stage: build
-  image: docker:latest
-  services:
-    - docker:dind
+  tags:
+    - frontend
   script:
-    - docker build -t frontendSenti .
-
-
-deploy:
+    - npm run build
+# 这是我们的第三个任务，因为运行到这里项目的打包已经完成，我们即将用docker创建新的容器部署项目
+job_deploy:
   stage: deploy
-  image: docker:latest
-  services:
-    - docker:dind
+  image: docker # 因为这里我们用到docker指令所以要把node环境切换到docker
+  tags:
+    - frontend
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull your_image_name
-    - docker run -d -p 80:8080 frontendSenti
-  environment:
-    name: production
-    url: 117.78.7.63
+    # 这里是通过我们项目根目录下的Dockerfile文件创建一个新的镜像
+    # 不懂可以理解成打包成一个安装包
+    - docker build -t rainbow-admin .
+    # 这里是查看当前的服务器上有没有正在运行或者存在我们之前运行过的项目容器，如果有删除了
+    - if [ $(docker ps -aq --filter name=rainbow-admin-main) ];then docker rm -f rainbow-admin-main;fi
+    # 这里是运行我们刚才创建的新的镜像
+    # 不懂得可以理解成安装我们刚才打包好的安装包，安装过后会把你的项目运行在nginx里面，外网就可以访问你的项目了
+    - docker run -d -p 80:80 --name=rainbow-admin-main rainbow-admin
+
+

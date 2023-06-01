@@ -10,17 +10,9 @@ COPY package*.json ./
 # 安装依赖
 RUN npm install
 
-# 复制所有文件到工作目录
-COPY . .
-
-# 构建 Vue 项目
-RUN npm run build
-
-# 使用 Nginx 作为服务器
-FROM nginx:stable-alpine as production-stage
-
-# 拷贝构建结果到 Nginx 默认目录
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-
-# 启动 Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# 这里说明我们的基础镜像是nginx
+# 如同上面所说，不懂的可以简单理解为我们下面的所有任务是在一个有nginx环境的虚拟机里完成的
+FROM nginx
+# nginx的默认访问目录是/usr/share/nginx/html
+# 所以我们只要把打包好的dist复制到对应目录下就可以
+COPY dist /usr/share/nginx/html
