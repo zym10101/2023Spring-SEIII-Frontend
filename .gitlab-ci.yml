@@ -20,7 +20,7 @@ job_install:
   tags:
     - frontend # 这里是当前任务的标签，标签是我们后面在gitlab-runner中定义的
   script: # 每个任务都必须有script，顾名思义就是执行的语句
-    - npm install # 前面说的我们处于一个有node环境的虚拟机，那这句话就是在这个虚拟机的我们当前项目里执行npm install
+    - npm install --force # 前面说的我们处于一个有node环境的虚拟机，那这句话就是在这个虚拟机的我们当前项目里执行npm install
 # 这是我们的第二个任务，逻辑和上面的第一个任务都一样，就不做详细说明
 job_build:
   stage: build
