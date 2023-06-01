@@ -26,6 +26,12 @@ const routes = [
             import("../views/AnalyseView.vue"),
     },
     {
+        path: "/mark",
+        name: "mark",
+        component: () =>
+            import("../views/MarkView.vue"),
+    },
+    {
         path: "/login",
         name: "login",
         component: () =>
