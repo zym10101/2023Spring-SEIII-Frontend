@@ -237,12 +237,12 @@ export default {
             this.getLineData(newValue);
         },
         selectedLalel(newvalue){
-            console.log("改变选项",newvalue)
+            console.log("label改变option",newvalue)
             this.labelopthion=newvalue
             this.submitSelectedOptions()
         },
         selectedLineReaction(newvalue){
-            console.log("改变选项",newvalue)
+            // console.log("改变选项",newvalue)
             this.getLineReaction(newvalue);
         },
         selectedLineUser(newvalue){
@@ -508,12 +508,11 @@ export default {
                     title ="label情绪对比图--comment"
                 }
                 axios.post(url, params).then(res => { // url即在mock.js中定义的
-                    console.log(res.data)
+                    // console.log(res.data)
                     this.drawLineChart("LineOfLabel",res.data.data,title)
                     // this.options = res.data.map((item) => ({ value: item, label: item }));
                 })
-                console.log('被选择的选项值：', this.selectedOptions);
-
+                // console.log('被选择的选项值：', this.selectedOptions);
             }
         },
 
@@ -534,14 +533,24 @@ export default {
                 weighting: 0.7,
                 labels:(await axios.get('/api/get-most-used-labels', {params})).data
             }
-            console.log(params)
-            axios.post("/api/analyse/line/all/label",params).then(res=>{
+            let url="";
+            let title="";
+            if(this.labelopthion==="option1"){
+                url='/api/analyse/line/all/label'
+                title ="label情绪对比图--issue+comment"
+            }else if(this.labelopthion==="option2"){
+                url='/api/analyse/line/issue/label'
+                title ="label情绪对比图--issue"
+            }else if(this.labelopthion==="option3"){
+                url='/api/analyse/line/comment/label'
+                title ="label情绪对比图--comment"
+            }
+            axios.post(url,params).then(res=>{
                 console.log(res.data)
-                this.drawLineChart("LineOfLabel",res.data.data,res.data.title)
+                this.drawLineChart("LineOfLabel",res.data.data,title)
             })
 
         },
-
         getLineReaction(newvalue){
             let url="";
             let title="";
