@@ -80,7 +80,9 @@ export default {
             interval: 2,
             scale: false,
             axisLabel: {
-              formatter: '{value}'
+              formatter: function(value) {
+                return value + ' 条';
+              }
             },
             splitLine: {
               show: false
@@ -90,10 +92,12 @@ export default {
         yAxis: [
           {
             type: 'value',
-            interval: 0.5,
+            interval: 0.1,
             scale: false,
             axisLabel: {
-              formatter: '{value}'
+              formatter: function(value) {
+                return value + ' 分';
+              }
             },
             splitLine: {
               show: false
