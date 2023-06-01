@@ -35,6 +35,7 @@ job_deploy:
   tags:
     - frontend
   script:
+    -
     # 这里是通过我们项目根目录下的Dockerfile文件创建一个新的镜像
     # 不懂可以理解成打包成一个安装包
     - docker build -t rainbow-admin .
