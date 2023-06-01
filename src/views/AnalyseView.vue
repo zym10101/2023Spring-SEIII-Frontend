@@ -19,17 +19,17 @@
       </el-select>&nbsp;&nbsp;
     </div>
     <el-form class="dateForm" ref="form" :model="form" label-width="20%">
-      <el-row>
-        <el-col :span="9" style="margin-right: 10px">
+      <el-row type="flex" justify="center">
+        <el-col :span="4" style="margin-top: 3px;">
           <el-date-picker v-model="form.since" type="date" :disabled-date="disabledDateSince" placeholder="起始时间"
                           style="width: 100%;z-index: 999;"></el-date-picker>
         </el-col>
-        <el-col :span="2">至</el-col>
-        <el-col :span="9" style="margin-right: 10px">
+        <el-col :span="1" style="text-align:center;margin-top: 4px;">至</el-col>
+        <el-col :span="4" style="margin-right: 10px;margin-top: 3px;">
           <el-date-picker v-model="form.until" type="date" :disabled-date="disabledDateUntil" placeholder="结束时间"
                           style="width:100%;z-index: 999;"></el-date-picker>
         </el-col>
-        <el-col :span="2">
+        <el-col :span="2" style="text-align:center;">
           <el-button type="success" @click="saveRepoDate"
                      style="background-color: #4ea397; color: white; display: inline-block;">保存
           </el-button>
