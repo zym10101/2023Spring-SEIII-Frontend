@@ -369,72 +369,36 @@ export default {
                     console.log(res.data)
                     console.log(res.data.data)// 打印一下响应数据
                     this.drawLineChart(element,res.data.data,res.data.title);
-    },
-    getLineData(newValue) {
-
-      const element = "LineOfAll";
-      if (newValue === 'option1') {
-        const params = {
-          repo_name: this.reponame,
-          start_time: this.form.since,
-          end_time: this.form.until
-        };
-        axios.get('/api/analyse/line/all', {params}).then(res => { // url即在mock.js中定义的
-          console.log(res.data)
-          console.log(res.data.data)// 打印一下响应数据
-          this.drawLineChart(element, res.data.data, res.data.title);
-
-        })
-      }
-      if (newValue === 'option2') {
-        console.log("change to 2")
-        const params = {
-          repo_name: this.reponame,
-          start_time: this.form.since,
-          end_time: this.form.until
-        };
-        axios.get('/api/analyse/line/issue', {params}).then(res => { // url即在mock.js中定义的
-          console.log(res.data.data)// 打印一下响应数据
-          this.drawLineChart(element, res.data.data, res.data.title);
-
-        })
-      }
-      if (newValue === 'option3') {
-        const params = {
-          repo_name: this.reponame,
-          start_time: this.form.since,
-          end_time: this.form.until
-        };
-        axios.get('/api/analyse/line/comment', {params}).then(res => { // url即在mock.js中定义的
-          console.log(res.data.data)// 打印一下响应数据
-          this.drawLineChart(element, res.data.data, res.data.title);
-        })
-      }
-    },
-    drawLineChart(element, data, title) {
-      const chartContainer = document.getElementById(element);
-      console.log(chartContainer)
-      const mychart = echarts.init(chartContainer, this.curTheme);
-      window.addEventListener('resize', function () {
-        mychart.resize();
-      });
-      console.log(element)
+    
                 })
-            }
-            if(newValue=='option3'){
+              }
+            if (newValue === 'option2') {
+                console.log("change to 2")
                 const params = {
-                    repo_name: this.reponame,
-                    start_time: this.form.since,
-                    end_time: this.form.until
+                  repo_name: this.reponame,
+                  start_time: this.form.since,
+                  end_time: this.form.until
                 };
-                axios.get('/api/analyse/line/comment',{params}).then(res => { // url即在mock.js中定义的
-                    console.log(res.data.data)// 打印一下响应数据
-                    this.drawLineChart(element,res.data.data,res.data.title);
+                axios.get('/api/analyse/line/issue', {params}).then(res => { // url即在mock.js中定义的
+                console.log(res.data.data)// 打印一下响应数据
+                this.drawLineChart(element, res.data.data, res.data.title);
                 })
             }
-        },
-
-        getLineDataByWeighting(weight){
+            if (newValue === 'option3') {
+              const params = {
+                repo_name: this.reponame,
+                start_time: this.form.since,
+                end_time: this.form.until
+              };
+              axios.get('/api/analyse/line/comment', {params}).then(res => { // url即在mock.js中定义的
+              console.log(res.data.data)// 打印一下响应数据
+              this.drawLineChart(element, res.data.data, res.data.title);
+              })
+            } 
+            
+      
+      },
+      getLineDataByWeighting(weight){
             const element="LineOfAll";
             const params = {
                 repo_name: this.reponame,
@@ -449,15 +413,14 @@ export default {
             })
 
         },
-
-        drawLineChart(element,data,title){
-            const chartContainer = document.getElementById(element);
-            const mychart = echarts.init(chartContainer,this.curTheme);
-            window.addEventListener('resize', function() {
-                mychart.resize();
-            });
-            console.log(element)
-
+    drawLineChart(element, data, title) {
+      const chartContainer = document.getElementById(element);
+      console.log(chartContainer)
+      const mychart = echarts.init(chartContainer, this.curTheme);
+      window.addEventListener('resize', function () {
+        mychart.resize();
+      });
+      console.log(element)
       const option = {
         title: {
           text: title
@@ -513,58 +476,52 @@ export default {
       mychart.setOption(option);
     },
     drawPieChart(element, data, title) {
-            const option = {
-                title: {
-                    text: title
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                grid: {
-                    left: '10%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
-                },
-                toolbox: {
-                    show: true,
-                    feature: {
-                        dataZoom: {
-                            yAxisIndex: 'none'
-                        },
-                        dataView: { readOnly: false },
-                        magicType: { type: ['line', 'bar'] },
-                        restore: {},
-                        saveAsImage: {}
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    boundaryGap: true,
-                    data: data.xAxis,
-                    axisLabel: {
-                        rotate: 45 // 设置标签旋转角度，单位为度，默认为 0
-                    }
-                },
-                yAxis: {},
-                series: [
-                    {   name: 'positive',
-                        data: data.pos,
-                        type: 'line'
-                    },
-                    {   name: 'negative',
-                        data: data.neg,
-                        type: 'line'
-                    },
-                    {   name: 'neutral',
-                        data: data.neu,
-                        type: 'line'
-                    }
-                ]
-            };
-            mychart.setOption(option);
+      const chartContainer = document.getElementById(element);
+      const mychart = echarts.init(chartContainer, this.curTheme);
+      window.addEventListener('resize', function () {
+        mychart.resize();
+      });
+      // 使用后台数据绘制扇形图
+      const option = {
+        title: {
+          text: title
         },
-        drawBarChart(element,data,title){
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        series: [
+          {
+            type: 'pie',
+            data: [
+              {
+                value: data.pos[0],
+                name: 'positive'
+              },
+
+              {
+                value: data.neg[0],
+                name: 'negative'
+              },
+              {
+                value: data.neu[0],
+                name: 'neutral'
+              },
+            ],
+            radius: '50%',
+            label: {
+              normal: {
+                show: true,
+                formatter: '{b} ({d}%)' //自定义显示格式(b:name, c:value, d:百分比)
+              }
+            }
+          }
+        ]
+      };
+      mychart.setOption(option);
+    },
+    drawBarChart(element,data,title){
             const chartContainer = document.getElementById(element);
             const mychart = echarts.init(chartContainer,this.curTheme);
             window.addEventListener('resize', function() {
@@ -623,54 +580,6 @@ export default {
             };
             mychart.setOption(option);
         },
-        drawPieChart(element,data,title) {
-
-      const chartContainer = document.getElementById(element);
-      const mychart = echarts.init(chartContainer, this.curTheme);
-      window.addEventListener('resize', function () {
-        mychart.resize();
-      });
-      // 使用后台数据绘制扇形图
-      const option = {
-        title: {
-          text: title
-        },
-        toolbox: {
-          feature: {
-            saveAsImage: {}
-          }
-        },
-        series: [
-          {
-            type: 'pie',
-            data: [
-              {
-                value: data.pos[0],
-                name: 'positive'
-              },
-
-              {
-                value: data.neg[0],
-                name: 'negative'
-              },
-              {
-                value: data.neu[0],
-                name: 'neutral'
-              },
-            ],
-            radius: '50%',
-            label: {
-              normal: {
-                show: true,
-                formatter: '{b} ({d}%)' //自定义显示格式(b:name, c:value, d:百分比)
-              }
-            }
-          }
-        ]
-      };
-      mychart.setOption(option);
-    },
-
     disabledDateSince(date) {
       return date < new Date(this.earliestTime);
     },
@@ -705,83 +614,6 @@ export default {
       })
     },
     submitSelectedOptions() {
-      // 将选择的选项值提交给后端的逻辑
-      // 可以在这里使用 Axios 或其他请求库发送请求，并将 selectedOptions 作为请求参数传递给后端
-      // 示例：打印被选择的选项值
-      const params = {
-        repo_name: this.reponame,
-        start_time: this.form.since,
-        end_time: this.form.until,
-        weighting: 0.7,
-        labels: Array.from(this.selectedOptions)
-      };
-      console.log("参数：", params)
-      let url;
-      let title;
-      //没有选择label时
-      if (params.labels.length === 0) {
-        this.drawInitLineLabel()
-      } else {
-        if (this.labeloption === "option1") {
-          url = '/api/analyse/line/all/label'
-          title = "label情绪对比图--issue+comment"
-        }
-        if (this.labeloption === "option2") {
-          url = '/api/analyse/line/issue/label'
-          title = "label情绪对比图--issue"
-        }
-        if (this.labeloption === "option3") {
-          url = '/api/analyse/line/comment/label'
-          title = "label情绪对比图--comment"
-        }
-        axios.post(url, params).then(res => { // url即在mock.js中定义的
-          // console.log(res.data)
-          this.drawLineChart("LineOfLabel", res.data.data, title)
-          // this.options = res.data.map((item) => ({ value: item, label: item }));
-        })
-        // console.log('被选择的选项值：', this.selectedOptions);
-      }
-    },
-
-    async drawInitLineLabel() {
-      // 将选择的选项值提交给后端的逻辑
-      // 可以在这里使用 Axios 或其他请求库发送请求，并将 selectedOptions 作为请求参数传递给后端
-      // 示例：打印被选择的选项值
-      let params = {
-        repo_name: this.reponame,
-        start_time: this.form.since,
-        end_time: this.form.until,
-      };
-      console.log(params)
-      params = {
-        repo_name: this.reponame,
-        start_time: this.form.since,
-        end_time: this.form.until,
-        weighting: 0.7,
-        labels: (await axios.get('/api/get-most-used-labels', {params})).data
-      }
-      let url = "";
-      let title = "";
-      if (this.labeloption === "option1") {
-        url = '/api/analyse/line/all/label'
-        title = "label情绪对比图--issue+comment"
-      } else if (this.labeloption === "option2") {
-        url = '/api/analyse/line/issue/label'
-        title = "label情绪对比图--issue"
-      } else if (this.labeloption === "option3") {
-        url = '/api/analyse/line/comment/label'
-        title = "label情绪对比图--comment"
-      }
-      axios.post(url, params).then(res => {
-        console.log(res.data)
-        this.drawLineChart("LineOfLabel", res.data.data, title)
-      })
-            axios.get('/api/get-issue-labels',{params}).then(res => { // url即在mock.js中定义的
-                console.log(res.data)
-                this.options = res.data.map((item) => ({ value: item, label: item }));
-            })
-        },
-        submitSelectedOptions() {
             // 将选择的选项值提交给后端的逻辑
             // 可以在这里使用 Axios 或其他请求库发送请求，并将 selectedOptions 作为请求参数传递给后端
             // 示例：打印被选择的选项值
@@ -858,97 +690,7 @@ export default {
                 console.log(res.data)
                 this.drawBarChart("BarOfLabel",res.data.data,title)
             })
-
-    },
-    getLineReaction(new_value) {
-      let url = "";
-      let title = "";
-      const params = {
-        repo_name: this.reponame,
-        start_time: this.form.since,
-        end_time: this.form.until,
-        weighting: 0.7
-      }
-      //http://localhost:5000/analyse/line/all/reaction?repo_name=apache/superset&start_time=2022-3-1&end_time=2023-5-31&weighting=0.7
-      //http://localhost:5000/analyse/line/all/reaction?repo_name="apache/superset"&start_time=2022-3-1&end_time=2023-5-31&weighting=0.7
-      //
-      if (new_value === "option1") {
-        url = '/api/analyse/line/all/reaction'
-        title = "reaction情绪对比图--issue+comment"
-      }
-      if (new_value === "option2") {
-        url = '/api/analyse/line/issue/reaction'
-        title = "reaction情绪对比图--issue"
-      }
-      if (new_value === "option3") {
-        url = '/api/analyse/line/comment/reaction'
-        title = "reaction情绪对比图--comment"
-      }
-      console.log("reaction", params)
-      axios.post(url, params).then(res => { // url即在mock.js中定义的
-        console.log(res.data.data)// 打印一下响应数据
-        this.drawLineChart("LineOfReaction", res.data.data, title);
-      })
-    },
-    //个人分析粒度
-    HandleClick() {
-      console.log(this.searchQuery)
-      const param = {
-        repo_name: this.reponame,
-        start_time: "2022-5-1",
-        end_time: "2023-5-31",
-        user: this.searchQuery
-      };
-      console.log("发送user请求")
-      axios.post("/api/analyse/line/issue/user", param)
-          .then((response) => {
-            console.log(response.data)
-            const title = this.searchQuery + "的情绪波动图--issue+comment"
-            this.drawLineChart("LineOfUser", response.data.data, title)
-          })
-    },
-    UserChangeOption(newvalue) {
-      let url = "";
-      let title = "";
-      const params = {
-        repo_name: this.reponame,
-        start_time: "2022-5-1",
-        end_time: "2023-5-31",
-        user: this.searchQuery
-      };
-      if (newvalue === "option1") {
-        url = '/api/analyse/line/all/user'
-        title = this.searchQuery + "的情绪波动图--issue+comment"
-      }
-      if (newvalue === "option2") {
-        url = '/api/analyse/line/issue/user'
-        title = this.searchQuery + "的情绪波动图--issue"
-      }
-      if (newvalue === "option3") {
-        url = '/api/analyse/line/comment/user'
-        title = this.searchQuery + "的情绪波动图--comment"
-      }
-      axios.post(url, params).then(res => { // url即在mock.js中定义的
-        console.log(res.data.data)// 打印一下响应数据
-        this.drawLineChart("LineOfUser", res.data.data, title);
-      })
-    },
-    getAllUser() {
-      const params = {
-        repo_name: this.reponame,
-        start_time: "2022-5-1",
-        end_time: "2023-5-31"
-      };
-      const url = "/api/get-issue-users";
-      axios.post(url, params).then(res => {
-        console.log(res.data)
-        this.items = res.data.map((item) => (item))
-        this.searchQuery = this.items[0];
-        this.HandleClick();
-      })
-    },
-  },
-        },
+          },
         getLineReaction(newvalue){
             let url="";
             let title="";
