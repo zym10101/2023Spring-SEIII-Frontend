@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <h1>{{ this.reponame }}情绪分析可视化结果</h1>
-    <div style="position: fixed;top: 11%;right: 8%">
+    <div style="position: fixed;top: 11%;right: 8%;z-index: 1001;">
       <el-select v-model="selectedValueFreq" placeholder="请选择">
         <template #prefix>
           <span class="prefix-text">时间跨度：</span>
@@ -10,7 +10,7 @@
 
       </el-select>&nbsp;&nbsp;
     </div>
-    <div style="position: fixed;top: 16%;right: 8%">
+    <div style="position: fixed;top: 16%;right: 8%;z-index: 1001;">
       <el-select v-model="selectedValuePeriod" placeholder="请选择" class="period">
         <template #prefix>
           <span class="prefix-text">时段数量：</span>
