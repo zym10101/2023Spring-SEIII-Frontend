@@ -180,7 +180,9 @@ export default {
       earliestTime: '',
     }
   },
+
   mounted() {
+    this.function()
     this.form.repo = "apache/superset";
     this.form.since = Date.now();
     this.form.until = Date.now();
@@ -188,6 +190,12 @@ export default {
     this.tableData = localStorage.getItem('tableData')===null?[]:JSON.parse(localStorage.getItem('tableData'))
   },
   methods: {
+      function() {
+          if (location.href.indexOf("#reloaded") == -1) {
+              location.href = location.href + "#reloaded";
+              location.reload();
+          }
+      },
     filterTag(value, row) {
       return row.state === value;
     },

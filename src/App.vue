@@ -19,15 +19,66 @@
         <router-link to="/mark" class="navbar-link">数据标注</router-link>
       </li>
     </ul>
-    <div class="profile-container">
-      <router-link to="/login" class="navbar-link">登录</router-link>
-    </div>
+      <div class="profile-container">
+          <template v-if="isLoggedIn">
+              <span class="navbar-link user-element" @click="toggleLogoutMenu">{{ username }}</span>
+              <div v-if="isLogoutMenuVisible" class="logout-menu" ref="logoutMenu">
+                  <p>确定要登出吗？</p>
+                  <button @click="logout">登出</button>
+                  <button @click="cancel">取消</button>
+              </div>
+          </template>
+          <template v-else>
+              <router-link to="/login" class="navbar-link ">登录</router-link>
+          </template>
+      </div>
   </nav>
   <div class="context">
     <router-view/>
   </div>
 
 </template>
+
+<script>
+
+export default {
+    data() {
+        return {
+            isLoggedIn: sessionStorage.getItem('username')!=null, // 假设用户未登录
+            username: sessionStorage.getItem('username'), // 假设已登录用户名为JohnDoe
+            isLogoutMenuVisible: false // 控制登出菜单的显示状态
+        };
+    },
+
+    methods: {
+        toggleLogoutMenu() {
+            this.isLogoutMenuVisible = !this.isLogoutMenuVisible; // 切换登出菜单的显示状态
+        },
+        logout() {
+            // 执行登出操作，例如清除用户登录状态、重置用户名等
+            this.isLogoutMenuVisible = false; // 登出后隐藏登出菜单
+            sessionStorage.removeItem('username')
+            this.isLoggedIn=false
+            this.$router.push('/');
+        },
+        cancel(){
+            this.isLogoutMenuVisible = false; // 登出后隐藏登出菜单
+        },
+        handleStorageChange(event) {
+            if (event.key === 'username') {
+                // 会话存储中的用户名发生变化时，更新组件中的数据
+                this.username = event.newValue || '';
+                this.isLoggedIn = !!this.username;
+            }
+        }
+    },
+    // computed: {
+    //     setusername(){
+    //         return sessionStorage.getItem('username')
+    //     }
+    // }
+};
+</script>
 
 <style lang="scss">
 #app {
@@ -36,6 +87,20 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+.logout-menu {
+  position: fixed;
+  height: 100px;
+  width: 150px;
+  margin-top: 50px;
+  right: 10px;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .navbar {
@@ -111,6 +176,11 @@ nav {
   /* 头像和个人主页容器样式 */
   position: absolute;
   right: 40px;
+}
+.user-element{
+  position: fixed;
+  right: 10px;
+  top: 10px;
 }
 
 .avatar {

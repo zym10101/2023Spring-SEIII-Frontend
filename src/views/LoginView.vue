@@ -150,6 +150,7 @@ export default {
                      // 路由到"index"页面
                      alert("登录成功！")
                      this.$router.push('/scrapy');
+
                  } else {
                      // 登录失败，处理失败逻辑
                  }
