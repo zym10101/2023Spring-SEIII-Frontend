@@ -321,10 +321,18 @@ export default {
               labelsName += _item.name + " ";
             })
             item.labels = labelsName
-            item.user = item.user.login
+            if(item.user===null){
+              item.user = ''
+            }else{
+              item.user = item.user.login
+            }
             let commentTable = item.issue_comments
             commentTable.forEach(_item => {
-              _item.user = _item.user.login
+              if(_item.user===null){
+                _item.user = ''
+              }else{
+                _item.user = _item.user.login
+              }
             })
             tempData = tempData.concat(item)
             this.tableData = tempData
