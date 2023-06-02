@@ -7,6 +7,7 @@ stages:
   - install
   - build
   - deploy
+  - release
 # 因为每个任务中所有操作产生的新的文件在进行到下一个任务时都会被清除
 # 但有些我们不希望清楚，所以我们用到缓存，cache中定义的paths下的文件会被缓存到下一个任务中
 cache:
@@ -43,5 +44,21 @@ job_deploy:
     # 这里是运行我们刚才创建的新的镜像
     # 不懂得可以理解成安装我们刚才打包好的安装包，安装过后会把你的项目运行在nginx里面，外网就可以访问你的项目了
     - docker run -d -p 80:80 --name=rainbow-admin-main rainbow-admin
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == "master"
+  script:
+    - echo "running release_job for iter3"
+  release:
+    tag_name: 'v0.$CI_PIPELINE_IID'
+    description: 'v0.$CI_PIPELINE_IID'
+    ref: '$CI_COMMIT_SHA'
+  tags:
+    - frontend
 
 
