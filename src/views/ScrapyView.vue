@@ -184,7 +184,6 @@ export default {
     this.form.repo = "apache/superset";
     this.form.since = Date.now();
     this.form.until = Date.now();
-    console.log(this.form.since)
     this.form.email = "3320415065@qq.com";
     this.tableData = localStorage.getItem('tableData')===null?[]:JSON.parse(localStorage.getItem('tableData'))
   },

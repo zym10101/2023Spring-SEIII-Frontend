@@ -239,14 +239,14 @@ export default {
     return {
       title: '',
       data: [],
-      selectedPie: null,
+      selectedPie: 'option1',
       weightingPieAll: 0.7,
-      selectedLine: null,
+      selectedLine: 'option1',
       weightingLineAll: 0.7,
-      selectedLabel: null,
+      selectedLabel: 'option1',
       weightingLabelAll: 0.7,
-      selectedLineReaction: null,
-      selectedLineUser: null,
+      selectedLineReaction: 'option1',
+      selectedLineUser: 'option1',
       curTheme: mytheme1,
       reponame: sessionStorage.getItem('reponame'),
       form: {
@@ -1001,8 +1001,6 @@ export default {
         this.weightingUserAll = input.value.slice(0, maxLength);
       }
     },
-
-
     drawAllByWeighting(event) {
       const input = event.target;
       if (input.value.length !== 0) {
@@ -1022,13 +1020,8 @@ export default {
           console.log(this.weightingUserAll)
           this.UserChangeOption('option1');
         }
-
       }
     }
-
-
   },
-
-
 };
 </script>
