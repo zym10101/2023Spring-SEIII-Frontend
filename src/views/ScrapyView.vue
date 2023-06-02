@@ -184,6 +184,7 @@ export default {
     this.form.repo = "apache/superset";
     this.form.since = Date.now();
     this.form.until = Date.now();
+    console.log(this.form.since)
     this.form.email = "3320415065@qq.com";
     this.tableData = localStorage.getItem('tableData')===null?[]:JSON.parse(localStorage.getItem('tableData'))
   },
@@ -400,14 +401,21 @@ export default {
         return
       }
       this.$router.push({
-        name: 'analyse',
-        params: {
-          repoName: this.form.repo,
-          repoSince:this.form.since,
-          repoUntil:this.form.until
-        }
+          path: 'analyse',
+          query: {
+            repoName: this.form.repo,
+            repoSince:this.transformDate(this.form.since),
+            repoUntil:this.transformDate(this.form.until)
+        },
       })
-    }
+    },
+      transformDate(timestamp){
+          const date = new Date(timestamp);
+          const year = date.getFullYear();
+          const month = date.getMonth() + 1; // 注意月份是从 0 开始计数的，所以需要加 1
+          const day = date.getDate();
+          return `${year}-${month}-${day}`
+      }
   },
 };
 </script>

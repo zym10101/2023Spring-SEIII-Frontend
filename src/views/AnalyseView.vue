@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <h1>{{ this.reponame }}情绪分析可视化结果</h1>
+    <h1 style="font-size: 2.5em;margin: 30px">{{ this.reponame }}情绪分析可视化结果</h1>
     <div style="position: fixed;top: 11%;right: 8%;z-index: 1001">
       <el-select v-model="selectedValueMode" placeholder="请选择">
         <template #prefix>
@@ -83,7 +83,7 @@
       <p style="text-align: left">项目labels：</p>
       <div class="options">
         <div class="option" v-for="option in options" :key="option.value" style="margin-top: 10px">
-          <label style="width: 200px; text-align: left;">
+          <label style="width: 300px; text-align: left;">
             <input type="checkbox" v-model="selectedOptions" :value="option.value" @change="submitSelectedOptions"/>
             {{ option.label }}
           </label>
@@ -248,7 +248,7 @@ export default {
       selectedLineReaction: null,
       selectedLineUser: null,
       curTheme: mytheme1,
-      reponame: "apache/superset",
+      reponame: "",
       form: {
         repo: "",
         since: "",
@@ -297,10 +297,13 @@ export default {
     },
   },
   mounted() {
+    this.reponame=this.$route.query.repoName
+    this.earliestTime=this.$route.query.repoSince
+    this.latestTime=this.$route.query.repoUntil
     this.form.since = this.earliestTime;
     this.form.until = this.latestTime;
-    this.getPieData('option2');
-    this.getLineData('option2');
+    this.getPieData('option1');
+    this.getLineData('option1');
     this.fetchOptions();
     this.drawInitLineLabel();
     this.getLineReaction("option1");
@@ -674,11 +677,15 @@ export default {
       return date < new Date(this.form.since);
     },
     saveRepoDate() {
-      this.form.since = this.dateFormat(this.form.since)
-      this.form.until = this.dateFormat(this.form.until)
-      console.log(this.form.since, this.form.until)
-      this.getPieData('option2');
-      this.getLineData('option2');
+        this.form.since = this.dateFormat(this.form.since)
+        this.form.until = this.dateFormat(this.form.until)
+        console.log(this.form.since, this.form.until)
+        this.getPieData('option1');
+        this.getLineData('option1');
+        this.fetchOptions();
+        this.drawInitLineLabel();
+        this.getLineReaction("option1");
+        this.getAllUser()
     },
     dateFormat(date) {
       const this_date = new Date(date);
