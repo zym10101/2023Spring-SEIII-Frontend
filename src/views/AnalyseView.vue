@@ -1,19 +1,26 @@
 <template>
   <div class="app">
     <h1>{{ this.reponame }}情绪分析可视化结果</h1>
-    <div style="position: fixed;top: 11%;right: 8%;z-index: 1001;">
-      <el-select v-model="selectedValueFreq" placeholder="请选择">
+    <div style="position: fixed;top: 11%;right: 8%;z-index: 1001">
+      <el-select v-model="selectedValueMode" placeholder="请选择">
         <template #prefix>
-          <span class="prefix-text">时间跨度：</span>
+          <span class="prefix-text">图表显示:</span>
+        </template>
+        <el-option v-for="option in options_mode" :key="option.value" :label="option.label" :value="option.value"/>
+      </el-select>&nbsp;&nbsp;
+    </div>
+    <div style="position: fixed;top: 16%;right: 8%;z-index: 1001">
+      <el-select v-model="selectedValueFreq" placeholder="请选择" v-show="freqVisible">
+        <template #prefix>
+          <span class="prefix-text">时间跨度:</span>
         </template>
         <el-option v-for="option in options_freq" :key="option.value" :label="option.label" :value="option.value"/>
-
       </el-select>&nbsp;&nbsp;
     </div>
     <div style="position: fixed;top: 16%;right: 8%;z-index: 1001;">
-      <el-select v-model="selectedValuePeriod" placeholder="请选择" class="period">
+      <el-select v-model="selectedValuePeriod" placeholder="请选择" v-show="periodVisible">
         <template #prefix>
-          <span class="prefix-text">时段数量：</span>
+          <span class="prefix-text">时段数量:</span>
         </template>
         <el-option v-for="option in options_period" :key="option.value" :label="option.label" :value="option.value"/>
       </el-select>&nbsp;&nbsp;
@@ -86,13 +93,13 @@
 
     <div class="selectedbox">
       <label for="selectBox" class="placeholder" style="font-size: 16px">请选择范围：</label>
-      <select v-model="selectedLabel" class="box">
+      <select v-model="selectedLalel" class="box">
         <option value="option1">issues and comments</option>
         <option value="option2">issues</option>
         <option value="option3">comments</option>
       </select>
     </div>
-    <div v-if="selectedLabel === 'option1'" class="weighting">
+    <div v-if="selectedLalel === 'option1'" class="weighting">
       <label class="placeholder" style="font-size: 16px">请选择issue权重：</label>
       <input type="number" class="inputbox" id="labelAll" v-model="weightingLabelAll" placeholder="0~1"
              @input="checkRange3" @change="drawAllByWeighting" min="0" max="1" step="0.1">
@@ -236,7 +243,7 @@ export default {
       weightingPieAll: 0.7,
       selectedLine: null,
       weightingLineAll: 0.7,
-      selectedLabel: null,
+      selectedLalel: null,
       weightingLabelAll: 0.7,
       selectedLineReaction: null,
       selectedLineUser: null,
@@ -253,7 +260,7 @@ export default {
       options: [], // 存储从后端获取的选项值列表
       selectedOptions: [], // 存储被选择的选项值
       topLabels: [], //存储issue最多的八个
-      labeloption: "option1",
+      labelopthion: "option1",
       //个人分析
       searchQuery: '',
       isDropdownOpen: false,
@@ -263,15 +270,24 @@ export default {
       options_freq: [
         {label: '5天', value: '5D'},
         {label: '1周', value: '1W'},
-        {label: '1月', value: '1Q'},
+        {label: '2周', value: '2W'},
+        {label: '4周', value: '4W'},
+        {label: '1季', value: '1Q'},
       ],
       selectedValuePeriod: 8,
       options_period: [
         {label: 2, value: 2},
         {label: 4, value: 4},
-        {label: 6, value: 6},
         {label: 8, value: 8},
+        {label: 8, value: 16},
       ],
+      selectedValueMode: '',
+      options_mode: [
+        {label: '按照时间跨度', value: 'freq'},
+        {label: '按照时段数量', value: 'period'},
+      ],
+      freqVisible: false,
+      periodVisible: false,
     };
   },
   props: {
@@ -292,6 +308,16 @@ export default {
 
   },
   watch: {
+    selectedValueMode(newValue, oldValue) {
+      console.log(newValue, oldValue);
+      if (newValue === 'freq') {
+        this.periodVisible = false;
+        this.freqVisible = true;
+      } else if (newValue === 'period') {
+        this.freqVisible = false;
+        this.periodVisible = true;
+      }
+    },
     selectedPie(newValue, oldValue) {
       // 在这里执行向后台请求数据的逻辑
       // 根据 newValue 值发送请求，并处理返回的数据
@@ -310,6 +336,7 @@ export default {
       this.submitSelectedOptions()
     },
     selectedLineReaction(new_value) {
+      // console.log("改变选项",new_value)
       this.getLineReaction(new_value);
     },
     selectedLineUser(new_value) {
@@ -336,12 +363,13 @@ export default {
           this.drawPieChart(element, res.data.data, res.data.title);
         })
       }
-      if (newValue == 'option2') {
+      if (newValue === 'option2') {
         const params = {
           repo_name: this.reponame,
           start_time: this.form.since,
           end_time: this.form.until
         };
+        console.log("change to 2")
         axios.get('/api/analyse/pie/issue', {params}).then(res => { // url即在mock.js中定义的
           console.log(res.data.data)// 打印一下响应数据
           this.drawPieChart(element, res.data.data, "项目总体情绪占比图");
@@ -387,7 +415,7 @@ export default {
       //     this.drawLineChart(res.data.data,res.data.title)
       // })
       const element = "LineOfAll";
-      if (newValue == 'option1') {
+      if (newValue === 'option1') {
         const params = {
           repo_name: this.reponame,
           start_time: this.form.since,
@@ -407,9 +435,13 @@ export default {
           repo_name: this.reponame,
           start_time: this.form.since,
           end_time: this.form.until,
-          // freq: this.selectedValueFreq,
-          periods: this.selectedValuePeriod,
         };
+        if (this.freqVisible === true && this.selectedValueFreq !== '') {
+          params.freq = this.selectedValueFreq;
+        }
+        if (this.periodVisible === true && this.selectedValuePeriod !== '') {
+          params.periods = this.selectedValuePeriod;
+        }
         axios.get('/api/analyse/line/issue', {params}).then(res => { // url即在mock.js中定义的
           console.log(res.data.data)// 打印一下响应数据
           this.drawLineChart(element, res.data.data, res.data.title);
@@ -420,13 +452,17 @@ export default {
           repo_name: this.reponame,
           start_time: this.form.since,
           end_time: this.form.until,
-          // freq: this.selectedValueFreq,
-          periods: this.selectedValuePeriod,
         };
+        if (this.freqVisible === true && this.selectedValueFreq !== '') {
+          params.freq = this.selectedValueFreq;
+        }
+        if (this.periodVisible === true && this.selectedValuePeriod !== '') {
+          params.periods = this.selectedValuePeriod;
+        }
         axios.get('/api/analyse/line/comment', {params}).then(res => { // url即在mock.js中定义的
           console.log(res.data.data)// 打印一下响应数据
           this.drawLineChart(element, res.data.data, res.data.title);
-        })
+        });
       }
 
 
@@ -437,10 +473,14 @@ export default {
         repo_name: this.reponame,
         start_time: this.form.since,
         end_time: this.form.until,
-        // freq: this.selectedValueFreq,
-        periods: this.selectedValuePeriod,
         weighting: weight
       };
+      if (this.freqVisible === true && this.selectedValueFreq !== '') {
+        params.freq = this.selectedValueFreq;
+      }
+      if (this.periodVisible === true && this.selectedValuePeriod !== '') {
+        params.periods = this.selectedValuePeriod;
+      }
       axios.get('/api/analyse/line/all', {params}).then(res => { // url即在mock.js中定义的
         console.log(res.data)
         console.log(res.data.data)// 打印一下响应数据
@@ -669,7 +709,7 @@ export default {
       if (params.labels.length === 0 && this.weightingLabelAll === 0.7) {
         this.drawInitLineLabel()
       } else {
-        if (this.labeloption === "option1") {
+        if (this.labelopthion === "option1") {
           url = '/api/analyse/line/all/label'
           title = "label情绪对比图--issue+comment"
           params.weighting = this.weightingLabelAll
@@ -677,11 +717,11 @@ export default {
             params.labels = this.topLabels
           }
         }
-        if (this.labeloption === "option2") {
+        if (this.labelopthion === "option2") {
           url = '/api/analyse/line/issue/label'
           title = "label情绪对比图--issue"
         }
-        if (this.labeloption === "option3") {
+        if (this.labelopthion === "option3") {
           url = '/api/analyse/line/comment/label'
           title = "label情绪对比图--comment"
         }
@@ -714,13 +754,13 @@ export default {
       }
       let url = "";
       let title = "";
-      if (this.labeloption === "option1") {
+      if (this.labelopthion === "option1") {
         url = '/api/analyse/line/all/label'
         title = "label情绪对比图--issue+comment"
-      } else if (this.labeloption === "option2") {
+      } else if (this.labelopthion === "option2") {
         url = '/api/analyse/line/issue/label'
         title = "label情绪对比图--issue"
-      } else if (this.labeloption === "option3") {
+      } else if (this.labelopthion === "option3") {
         url = '/api/analyse/line/comment/label'
         title = "label情绪对比图--comment"
       }
@@ -767,10 +807,14 @@ export default {
         repo_name: this.reponame,
         start_time: "2022-5-1",
         end_time: "2023-5-31",
-        // freq: this.selectedValueFreq,
-        periods: this.selectedValuePeriod,
         user: this.searchQuery,
       };
+      if (this.freqVisible === true && this.selectedValueFreq !== '') {
+        param.freq = this.selectedValueFreq;
+      }
+      if (this.periodVisible === true && this.selectedValuePeriod !== '') {
+        param.periods = this.selectedValuePeriod;
+      }
       console.log("发送user请求")
       axios.post("/api/analyse/line/issue/user", param)
           .then((response) => {
@@ -786,11 +830,15 @@ export default {
         repo_name: this.reponame,
         start_time: "2022-5-1",
         end_time: "2023-5-31",
-        // freq: this.selectedValueFreq,
-        periods: this.selectedValuePeriod,
         user: this.searchQuery,
         weighting: this.weightingUserAll
       };
+      if (this.freqVisible === true && this.selectedValueFreq !== '') {
+        params.freq = this.selectedValueFreq;
+      }
+      if (this.periodVisible === true && this.selectedValuePeriod !== '') {
+        params.periods = this.selectedValuePeriod;
+      }
       if (newvalue === "option1") {
         url = '/api/analyse/line/all/user'
         title = this.searchQuery + "的情绪波动图--issue+comment"
