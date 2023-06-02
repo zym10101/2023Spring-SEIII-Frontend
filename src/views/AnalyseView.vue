@@ -260,7 +260,7 @@ export default {
       options: [], // 存储从后端获取的选项值列表
       selectedOptions: [], // 存储被选择的选项值
       topLabels: [], //存储issue最多的八个
-      labelopthion: "option1",
+      labeloption: "option1",
       //个人分析
       searchQuery: '',
       isDropdownOpen: false,
@@ -709,7 +709,7 @@ export default {
       if (params.labels.length === 0 && this.weightingLabelAll === 0.7) {
         this.drawInitLineLabel()
       } else {
-        if (this.labelopthion === "option1") {
+        if (this.labeloption === "option1") {
           url = '/api/analyse/line/all/label'
           title = "label情绪对比图--issue+comment"
           params.weighting = this.weightingLabelAll
@@ -717,11 +717,11 @@ export default {
             params.labels = this.topLabels
           }
         }
-        if (this.labelopthion === "option2") {
+        if (this.labeloption === "option2") {
           url = '/api/analyse/line/issue/label'
           title = "label情绪对比图--issue"
         }
-        if (this.labelopthion === "option3") {
+        if (this.labeloption === "option3") {
           url = '/api/analyse/line/comment/label'
           title = "label情绪对比图--comment"
         }
@@ -754,13 +754,13 @@ export default {
       }
       let url = "";
       let title = "";
-      if (this.labelopthion === "option1") {
+      if (this.labeloption === "option1") {
         url = '/api/analyse/line/all/label'
         title = "label情绪对比图--issue+comment"
-      } else if (this.labelopthion === "option2") {
+      } else if (this.labeloption === "option2") {
         url = '/api/analyse/line/issue/label'
         title = "label情绪对比图--issue"
-      } else if (this.labelopthion === "option3") {
+      } else if (this.labeloption === "option3") {
         url = '/api/analyse/line/comment/label'
         title = "label情绪对比图--comment"
       }
@@ -877,14 +877,14 @@ export default {
       const min = input.min;
       const max = input.max;
       const maxLength = 5; // 最大长度为5
-      if (/^0[^.]/.test(input.value) && input.value.length != 0) {
+      if (/^0[^.]/.test(input.value) && input.value.length !== 0) {
         input.value = min;
         this.weightingPieAll = min;
       }
-      if (value < min && input.value.length != 0) {
+      if (value < min && input.value.length !== 0) {
         input.value = min;
         this.weightingPieAll = min;
-      } else if (value > max && input.value.length != 0) {
+      } else if (value > max && input.value.length !== 0) {
         input.value = max;
         this.weightingPieAll = max;
       }
@@ -900,14 +900,14 @@ export default {
       const min = input.min;
       const max = input.max;
       const maxLength = 5; // 最大长度为5
-      if (/^0[^.]/.test(input.value) && input.value.length != 0) {
+      if (/^0[^.]/.test(input.value) && input.value.length !== 0) {
         input.value = min;
         this.weightingLineAll = min;
       }
-      if (value < min && input.value.length != 0) {
+      if (value < min && input.value.length !== 0) {
         input.value = min;
         this.weightingLineAll = min;
-      } else if (value > max && input.value.length != 0) {
+      } else if (value > max && input.value.length !== 0) {
         input.value = max;
         this.weightingLineAll = max;
       }
@@ -923,14 +923,14 @@ export default {
       const min = input.min;
       const max = input.max;
       const maxLength = 5; // 最大长度为5
-      if (/^0[^.]/.test(input.value) && input.value.length != 0) {
+      if (/^0[^.]/.test(input.value) && input.value.length !== 0) {
         input.value = min;
         this.weightingLabelAll = min;
       }
-      if (value < min && input.value.length != 0) {
+      if (value < min && input.value.length !== 0) {
         input.value = min;
         this.weightingLabelAll = min;
-      } else if (value > max && input.value.length != 0) {
+      } else if (value > max && input.value.length !== 0) {
         input.value = max;
         this.weightingLabelAll = max;
       }
@@ -946,14 +946,14 @@ export default {
       const min = input.min;
       const max = input.max;
       const maxLength = 5; // 最大长度为5
-      if (/^0[^.]/.test(input.value) && input.value.length != 0) {
+      if (/^0[^.]/.test(input.value) && input.value.length !== 0) {
         input.value = min;
         this.weightingReactionAll = min;
       }
-      if (value < min && input.value.length != 0) {
+      if (value < min && input.value.length !== 0) {
         input.value = min;
         this.weightingReactionAll = min;
-      } else if (value > max && input.value.length != 0) {
+      } else if (value > max && input.value.length !== 0) {
         input.value = max;
         this.weightingReactionAll = max;
       }
@@ -989,7 +989,7 @@ export default {
 
     drawAllByWeighting(event) {
       const input = event.target;
-      if (input.value.length != 0) {
+      if (input.value.length !== 0) {
         if (input.id === "pieAll") {
           console.log(this.weightingPieAll)
           this.getPieDataByWeighting(this.weightingPieAll);
