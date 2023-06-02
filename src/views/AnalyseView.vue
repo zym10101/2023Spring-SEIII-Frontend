@@ -93,13 +93,13 @@
 
     <div class="selectedbox">
       <label for="selectBox" class="placeholder" style="font-size: 16px">请选择范围：</label>
-      <select v-model="selectedLalel" class="box">
+      <select v-model="selectedLabel" class="box">
         <option value="option1">issues and comments</option>
         <option value="option2">issues</option>
         <option value="option3">comments</option>
       </select>
     </div>
-    <div v-if="selectedLalel === 'option1'" class="weighting">
+    <div v-if="selectedLabel === 'option1'" class="weighting">
       <label class="placeholder" style="font-size: 16px">请选择issue权重：</label>
       <input type="number" class="inputbox" id="labelAll" v-model="weightingLabelAll" placeholder="0~1"
              @input="checkRange3" @change="drawAllByWeighting" min="0" max="1" step="0.1">
@@ -243,7 +243,7 @@ export default {
       weightingPieAll: 0.7,
       selectedLine: null,
       weightingLineAll: 0.7,
-      selectedLalel: null,
+      selectedLabel: null,
       weightingLabelAll: 0.7,
       selectedLineReaction: null,
       selectedLineUser: null,
@@ -305,7 +305,6 @@ export default {
     this.drawInitLineLabel();
     this.getLineReaction("option1");
     this.getAllUser()
-
   },
   watch: {
     selectedValueMode(newValue, oldValue) {
@@ -343,11 +342,8 @@ export default {
       console.log("user变选项", new_value)
       this.UserChangeOption(new_value);
     }
-
-
   },
   methods: {
-
     getPieData(newValue) {
       const element = "PieOfAll";
       if (newValue === 'option1') {
@@ -373,7 +369,6 @@ export default {
         axios.get('/api/analyse/pie/issue', {params}).then(res => { // url即在mock.js中定义的
           console.log(res.data.data)// 打印一下响应数据
           this.drawPieChart(element, res.data.data, "项目总体情绪占比图");
-
         })
       }
       if (newValue === 'option3') {
@@ -386,12 +381,9 @@ export default {
           console.log(res.data)
           console.log(res.data.data)// 打印一下响应数据
           this.drawPieChart(element, res.data.data, res.data.title);
-
         })
       }
-
     },
-
     getPieDataByWeighting(weight) {
       const element = "PieOfAll";
       const params = {
@@ -405,15 +397,8 @@ export default {
         console.log(res.data.data)// 打印一下响应数据
         this.drawPieChart(element, res.data.data, res.data.title);
       })
-
     },
-
     getLineData(newValue) {
-      // axios.get('/analyse/linecharm/all').then(res => { // url即在mock.js中定义的
-      //     console.log(res.data.data)// 打印一下响应数据
-      //     console.log(res.data.title)
-      //     this.drawLineChart(res.data.data,res.data.title)
-      // })
       const element = "LineOfAll";
       if (newValue === 'option1') {
         const params = {
@@ -422,6 +407,12 @@ export default {
           end_time: this.form.until,
           weighting: this.weightingLineAll
         };
+        if (this.freqVisible === true && this.selectedValueFreq !== '') {
+          params.freq = this.selectedValueFreq;
+        }
+        if (this.periodVisible === true && this.selectedValuePeriod !== '') {
+          params.periods = this.selectedValuePeriod;
+        }
         axios.get('/api/analyse/line/all', {params}).then(res => { // url即在mock.js中定义的
           console.log(res.data)
           console.log(res.data.data)// 打印一下响应数据
@@ -969,14 +960,14 @@ export default {
       const min = input.min;
       const max = input.max;
       const maxLength = 5; // 最大长度为5
-      if (/^0[^.]/.test(input.value) && input.value.length != 0) {
+      if (/^0[^.]/.test(input.value) && input.value.length !== 0) {
         input.value = min;
         this.weightingUserAll = min;
       }
-      if (value < min && input.value.length != 0) {
+      if (value < min && input.value.length !== 0) {
         input.value = min;
         this.weightingUserAll = min;
-      } else if (value > max && input.value.length != 0) {
+      } else if (value > max && input.value.length !== 0) {
         input.value = max;
         this.weightingUserAll = max;
       }
