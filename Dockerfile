@@ -4,4 +4,5 @@ FROM nginx
 # nginx的默认访问目录是/usr/share/nginx/html
 # 所以我们只要把打包好的dist复制到对应目录下就可以
 COPY dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf
 
