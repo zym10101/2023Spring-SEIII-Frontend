@@ -44,7 +44,7 @@
       </el-row>
     </el-form>
 
-    <h2>项目粒度分析</h2>
+    <h1>项目粒度分析</h1>
     <div class="selectedbox">
       <label for="selectBox" class="placeholder" style="font-size: 16px">请选择范围：</label>
       <select v-model="selectedPie" class="box">
@@ -246,7 +246,9 @@ export default {
       selectedLabel: 'option1',
       weightingLabelAll: 0.7,
       selectedLineReaction: 'option1',
+      weightingReactionAll: 0.7,
       selectedLineUser: 'option1',
+      weightingUserAll: 0.7,
       curTheme: mytheme1,
       reponame: sessionStorage.getItem('reponame'),
       form: {
@@ -821,8 +823,8 @@ export default {
       console.log(this.searchQuery)
       const param = {
         repo_name: this.reponame,
-        start_time: "2022-5-1",
-        end_time: "2023-5-31",
+        start_time: this.form.since,
+        end_time: this.form.until,
         user: this.searchQuery,
       };
       if (this.freqVisible === true && this.selectedValueFreq !== '') {
@@ -832,20 +834,42 @@ export default {
         param.periods = this.selectedValuePeriod;
       }
       console.log("发送user请求")
-      axios.post("/api/analyse/line/issue/user", param)
+      let url = "";
+      let title = "";
+      if (this.selectedLineUser === "option1") {
+        url = '/api/analyse/line/all/user'
+        param.weighting = this.weightingUserAll
+        title = this.searchQuery + "的情绪波动图--issue+comment"
+      }
+      if (this.selectedLineUser === "option2") {
+        url = '/api/analyse/line/issue/user'
+        title = this.searchQuery + "的情绪波动图--issue"
+      }
+      if (this.selectedLineUser === "option3") {
+        url = '/api/analyse/line/comment/user'
+        title = this.searchQuery + "的情绪波动图--comment"
+      }
+      console.log("user", param)
+      console.log("url", url)
+      axios.post(url, param)
           .then((response) => {
             console.log(response.data)
-            const title = this.searchQuery + "的情绪波动图--issue+comment"
             this.drawLineChart("LineOfUser", response.data.data, title)
           })
+      // axios.post("/api/analyse/line/all/user", param)
+      //     .then((response) => {
+      //       console.log(response.data)
+      //       const title = this.searchQuery + "的情绪波动图--issue+comment"
+      //       this.drawLineChart("LineOfUser", response.data.data, title)
+      //     })
     },
     UserChangeOption(newvalue) {
       let url = "";
       let title = "";
       const params = {
         repo_name: this.reponame,
-        start_time: "2022-5-1",
-        end_time: "2023-5-31",
+        start_time: this.form.since,
+        end_time: this.form.until,
         user: this.searchQuery,
         weighting: this.weightingUserAll
       };
@@ -875,8 +899,8 @@ export default {
     getAllUser() {
       const params = {
         repo_name: this.reponame,
-        start_time: "2022-5-1",
-        end_time: "2023-5-31"
+        start_time: this.form.since,
+        end_time: this.form.until,
       };
       const url = "/api/get-issue-users";
       axios.post(url, params).then(res => {
