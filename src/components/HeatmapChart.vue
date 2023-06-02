@@ -23,8 +23,8 @@ export default {
 
       const option = {
         title: {
-          text: '标注情绪方面',
-          subtext: '对200条情绪文本进行标注'
+          text: '标注版本问题分析散点图',
+          subtext: '从2022年9月至2023年6月的所有关于apache superset项目的issue中摘取了200条进行人工标注'
         },
         grid: {
           left: '3%',
@@ -40,7 +40,7 @@ export default {
             let content = '<div class="echarts-tooltip">';
             const data = params.data
             if (data.value[0] !== undefined) {
-              content += `情绪方面：${data.name}<br>情绪值：${data.value[1]}<br>句子数量：${data.value[0]}<br>具体文本：<br>`;
+              content += `<strong>情绪方面：</strong>${data.name}<br><strong>情绪值：</strong>${data.value[1]}<br><strong>句子数量：</strong>${data.value[0]}<br><strong>具体文本：</strong>(eg.【aspect】, {bug} ,（request）)<br>`;
               var additionalContent = `${data.context}`;
               var strings = additionalContent.split(',');
               for (var i = 0; i < strings.length; i++) {
