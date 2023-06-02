@@ -669,7 +669,7 @@ export default {
       if (params.labels.length === 0 && this.weightingLabelAll === 0.7) {
         this.drawInitLineLabel()
       } else {
-        if (this.labelopthion === "option1") {
+        if (this.labeloption === "option1") {
           url = '/api/analyse/line/all/label'
           title = "label情绪对比图--issue+comment"
           params.weighting = this.weightingLabelAll
@@ -677,11 +677,11 @@ export default {
             params.labels = this.topLabels
           }
         }
-        if (this.labelopthion === "option2") {
+        if (this.labeloption === "option2") {
           url = '/api/analyse/line/issue/label'
           title = "label情绪对比图--issue"
         }
-        if (this.labelopthion === "option3") {
+        if (this.labeloption === "option3") {
           url = '/api/analyse/line/comment/label'
           title = "label情绪对比图--comment"
         }
@@ -714,13 +714,13 @@ export default {
       }
       let url = "";
       let title = "";
-      if (this.labelopthion === "option1") {
+      if (this.labeloption === "option1") {
         url = '/api/analyse/line/all/label'
         title = "label情绪对比图--issue+comment"
-      } else if (this.labelopthion === "option2") {
+      } else if (this.labeloption === "option2") {
         url = '/api/analyse/line/issue/label'
         title = "label情绪对比图--issue"
-      } else if (this.labelopthion === "option3") {
+      } else if (this.labeloption === "option3") {
         url = '/api/analyse/line/comment/label'
         title = "label情绪对比图--comment"
       }
