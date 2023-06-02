@@ -6,8 +6,8 @@
         <el-form-item label="仓库名称" prop="repo"
                       :rules="[{required: true, message: '请输入仓库名称', trigger: 'blur'}]">
           <el-input v-model="form.repo" style="width: 80%;margin-right: 10px"></el-input>
-          <el-button type="success" @click="saveRepoName">暂存</el-button>
-          <el-button type="warning" @click="clearRepoName">还原</el-button>
+          <el-button type="success" @click="saveRepoName" style="width: 60px">暂存</el-button>
+          <el-button type="warning" @click="clearRepoName" style="width: 60px">还原</el-button>
         </el-form-item>
         <el-form-item label="版本时间">
           <el-col :span="9" style="margin-right: 10px">
@@ -19,15 +19,15 @@
             <el-date-picker type="date" :disabled-date="disabledDateUntil" placeholder="结束时间" v-model="form.until"
                             style="width:100%;"></el-date-picker>
           </el-col>
-          <el-button type="success" @click="saveRepoDate">暂存</el-button>
-          <el-button type="warning" @click="clearRepoDate">还原</el-button>
+          <el-button type="success" @click="saveRepoDate" style="width: 60px">暂存</el-button>
+          <el-button type="warning" @click="clearRepoDate" style="width: 60px">还原</el-button>
         </el-form-item>
         <el-form-item label="个人邮箱" prop="email" :rules="[
       { required: true, message: '请输入邮箱地址', trigger: 'blur' },
       { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
           <el-input v-model="form.email" autocomplete="off" style="width: 80%;margin-right: 10px"></el-input>
-          <el-button type="success" @click="saveEmail">暂存</el-button>
-          <el-button type="warning" @click="clearEmail">还原</el-button>
+          <el-button type="success" @click="saveEmail" style="width: 60px">暂存</el-button>
+          <el-button type="warning" @click="clearEmail" style="width: 60px">还原</el-button>
         </el-form-item>
         <el-form-item>
           <el-col class="line" :span="11">项目配置:{{ repo_name }}</el-col>&nbsp;
