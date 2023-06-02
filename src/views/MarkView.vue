@@ -47,7 +47,7 @@
         <el-table-column prop="name" label="方面关键词" width="200px"></el-table-column>
         <el-table-column prop="value[0]" label="文本条数" width="200px" sortable></el-table-column>
         <el-table-column prop="value[1]" label="情绪值平均数" width="200px" sortable></el-table-column>
-        <el-table-column prop="issue" label="问题汇聚" width="200px"></el-table-column>
+        <el-table-column prop="issue" label="问题汇聚" width="600px" ></el-table-column>
       </el-table>
     </div>
   </div>
