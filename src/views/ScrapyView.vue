@@ -397,9 +397,9 @@ export default {
       this.chooseTypeVisible = true;
     },
     analyse() {
-      // if (this.checkScrapyNotFinish()) {
-      //   return
-      // }
+      if (this.checkScrapyNotFinish()) {
+        return
+      }
       sessionStorage.setItem('reponame', this.form.repo);
       this.$router.push({
           path: 'analyse',
