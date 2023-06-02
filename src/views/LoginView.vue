@@ -40,10 +40,10 @@
                         <input v-model="registerForm.repeatpwd" type="password" placeholder="enter password again" v-validator="passwordOption" />
                         <p v-if="!issamepwd" class="errorText">前后输入密码不一致</p>
 
-                        <div class="verification-code">
-                            <input type="text" v-model="code" placeholder="请输入验证码">
-                            <button :disabled="isCounting" @click="getCode">获取验证码</button>
-                        </div>
+<!--                        <div class="verification-code">-->
+<!--                            <input type="text" v-model="code" placeholder="请输入验证码">-->
+<!--                            <button :disabled="isCounting" @click="getCode">获取验证码</button>-->
+<!--                        </div>-->
 
                         <div class="verification-code">
                             <button type="submit">立即注册</button>
@@ -133,24 +133,46 @@ export default {
             if(this.loginForm.username==""){
                 this.usernameBlank=true;
             }
+            const data={
+                username:this.loginForm.username,
+                password: this.loginForm.password
+            }
             // 处理登录逻辑
             console.log('Logging in...', this.loginForm);
-            try {
-                const response =   axios.post('/api/login', {
-                    username:this.loginForm.username ,
-                    password: this.loginForm.password
-                });
-                // 处理登录成功的响应
-                console.log(response.data);
-            } catch (error) {
-                // 处理登录失败的错误
-                console.error(error);
-            }
+            axios.post('/api/login', data)
+             .then(response => {
+                 console.log(response.data)
+                 // 登录成功
+                 if (response.data.state===1) {
+                     //保存登录信息
+                     sessionStorage.setItem('username', data.username);
+
+                     // 路由到"index"页面
+                     alert("登录成功！")
+                     this.$router.push('/scrapy');
+                 } else {
+                     // 登录失败，处理失败逻辑
+                 }
+             })
 
         },
         register() {
             // 处理注册逻辑
             console.log('Registering...', this.registerForm);
+            const data={
+                username:this.registerForm.username,
+                password: this.registerForm.password,
+                email : this.registerForm.email
+            }
+            axios.post('/api/register',data).then(res=>{
+                console.log(res.data)
+                if(res.data.state===1){
+                    alert("注册成功！请返回登录")
+                    this.toggleForm()
+                }else {
+                    alert(res.data.message)
+                }
+            })
         }
         // async login() {
         //     console.log("hello");

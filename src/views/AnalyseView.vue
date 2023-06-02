@@ -248,7 +248,7 @@ export default {
       selectedLineReaction: null,
       selectedLineUser: null,
       curTheme: mytheme1,
-      reponame: "",
+      reponame: sessionStorage.getItem('reponame'),
       form: {
         repo: "",
         since: "",
@@ -296,7 +296,7 @@ export default {
       default: 'Search...',
     },
   },
-  mounted() {
+  created() {
     this.reponame=this.$route.query.repoName
     this.earliestTime=this.$route.query.repoSince
     this.latestTime=this.$route.query.repoUntil
