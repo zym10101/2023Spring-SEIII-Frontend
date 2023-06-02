@@ -317,6 +317,24 @@ export default {
         this.periodVisible = true;
       }
     },
+    selectedValueFreq(newValue, oldValue) {
+      console.log(newValue, oldValue);
+      if (this.selectedLine !== null) {
+        this.getLineData(this.selectedLine);
+      }
+      if (this.selectedLineUser !== null) {
+        this.UserChangeOption(this.selectedLineUser);
+      }
+    },
+    selectedValuePeriod(newValue, oldValue) {
+      console.log(newValue, oldValue);
+      if (this.selectedLine !== null) {
+        this.getLineData(this.selectedLine);
+      }
+      if (this.selectedLineUser !== null) {
+        this.UserChangeOption(this.selectedLineUser);
+      }
+    },
     selectedPie(newValue, oldValue) {
       // 在这里执行向后台请求数据的逻辑
       // 根据 newValue 值发送请求，并处理返回的数据
