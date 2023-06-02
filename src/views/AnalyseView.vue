@@ -86,13 +86,13 @@
 
     <div class="selectedbox">
       <label for="selectBox" class="placeholder" style="font-size: 16px">请选择范围：</label>
-      <select v-model="selectedLalel" class="box">
+      <select v-model="selectedLabel" class="box">
         <option value="option1">issues and comments</option>
         <option value="option2">issues</option>
         <option value="option3">comments</option>
       </select>
     </div>
-    <div v-if="selectedLalel === 'option1'" class="weighting">
+    <div v-if="selectedLabel === 'option1'" class="weighting">
       <label class="placeholder" style="font-size: 16px">请选择issue权重：</label>
       <input type="number" class="inputbox" id="labelAll" v-model="weightingLabelAll" placeholder="0~1"
              @input="checkRange3" @change="drawAllByWeighting" min="0" max="1" step="0.1">
@@ -236,7 +236,7 @@ export default {
       weightingPieAll: 0.7,
       selectedLine: null,
       weightingLineAll: 0.7,
-      selectedLalel: null,
+      selectedLabel: null,
       weightingLabelAll: 0.7,
       selectedLineReaction: null,
       selectedLineUser: null,
@@ -253,7 +253,7 @@ export default {
       options: [], // 存储从后端获取的选项值列表
       selectedOptions: [], // 存储被选择的选项值
       topLabels: [], //存储issue最多的八个
-      labelopthion: "option1",
+      labeloption: "option1",
       //个人分析
       searchQuery: '',
       isDropdownOpen: false,
@@ -310,7 +310,6 @@ export default {
       this.submitSelectedOptions()
     },
     selectedLineReaction(new_value) {
-      // console.log("改变选项",new_value)
       this.getLineReaction(new_value);
     },
     selectedLineUser(new_value) {
@@ -324,7 +323,7 @@ export default {
 
     getPieData(newValue) {
       const element = "PieOfAll";
-      if (newValue == 'option1') {
+      if (newValue === 'option1') {
         const params = {
           repo_name: this.reponame,
           start_time: this.form.since,
@@ -343,7 +342,6 @@ export default {
           start_time: this.form.since,
           end_time: this.form.until
         };
-        console.log("change to 2")
         axios.get('/api/analyse/pie/issue', {params}).then(res => { // url即在mock.js中定义的
           console.log(res.data.data)// 打印一下响应数据
           this.drawPieChart(element, res.data.data, "项目总体情绪占比图");
